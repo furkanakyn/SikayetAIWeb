@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Yeni Şikayet";
+}
+<h2>Yeni Şikayet</h2>
+
+<form method="post" asp-controller="Complaint" asp-action="Create">
+    <div class="form-group">
+        <label for="text">Şikayet:</label>
+        <textarea name="text" class="form-control" rows="4" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Gönder</button>
+</form>

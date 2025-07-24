@@ -1,0 +1,34 @@
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%) !important;
+}
+
+.form-control-lg {
+    border-radius: 12px !important;
+    border: 2px solid #e9ecef !important;
+    transition: all 0.3s !important;
+}
+
+    .form-control-lg:focus {
+        border-color: #3a7bd5 !important;
+        box-shadow: 0 0 0 0.25rem rgba(58, 123, 213, 0.25) !important;
+    }
+
+.btn-primary {
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.3s !important;
+}
+
+.card {
+    transition: transform 0.3s !important;
+}
+
+    .card:hover {
+        transform: translateY(-5px) !important;
+    }
+
+/* Bootstrap icon adjustments */
+.bi {
+    vertical-align: -.125em !important;
+}

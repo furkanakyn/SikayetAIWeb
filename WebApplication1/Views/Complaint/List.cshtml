@@ -1,0 +1,22 @@
+﻿@model List<Complaint>
+<h2>Gelen Şikayetler</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Metin</th>
+            <th>Kategori</th>
+            <th>Tarih</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Text</td>
+                <td>@item.Category</td>
+                <td>@item.CreatedAt.ToShortDateString()</td>
+            </tr>
+        }
+    </tbody>
+</table>

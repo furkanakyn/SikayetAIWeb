@@ -1,0 +1,137 @@
+﻿@{
+    ViewData["Title"] = "Şikayet Tahmin Sistemi";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-gradient-primary text-white py-4">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-megaphone-fill fs-2 me-3"></i>
+                        <div>
+                            <h2 class="mb-0 fw-bold">Şikayet Kategorisi Tahmin Sistemi</h2>
+                            <p class="mb-0 opacity-75">Şikayetinizi yazın, otomatik olarak doğru birime yönlendirelim</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-5">
+                    <form asp-action="Index" method="post" class="needs-validation" novalidate>
+                        <div class="mb-4">
+                            <label for="text" class="form-label fw-semibold">Şikayet Detayı</label>
+                            <textarea id="text" name="text" class="form-control form-control-lg border-2 py-3"
+                                      rows="5" placeholder="Şikayetinizi detaylı bir şekilde yazınız..."
+                                      required>@ViewBag.OriginalText</textarea>
+                            <div class="invalid-feedback">
+                                Lütfen şikayet detayını giriniz.
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg py-3">
+                                <i class="bi bi-robot me-2"></i> Tahmin Oluştur
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            @if (ViewBag.Prediction != null)
+            {
+                <div class="mt-4 animate__animated animate__fadeIn">
+                    <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                        <div class="card-header bg-light py-3">
+                            <h4 class="mb-0 text-primary">
+                                <i class="bi bi-graph-up me-2"></i> Tahmin Sonucu
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                                    <i class="bi bi-lightbulb text-primary fs-4"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">Tahmin Edilen Kategori</h5>
+                                    <span class="badge bg-primary fs-6 p-2">@ViewBag.Prediction</span>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-warning mt-3 d-flex align-items-center">
+                                <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+                                <div>
+                                    Bu tahmin yapay zeka tarafından oluşturulmuştur.
+                                    <span class="d-block text-muted small mt-1">Şikayetiniz en kısa sürede ilgili birime iletilecektir.</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <button class="btn btn-outline-primary me-2">
+                                    <i class="bi bi-check-circle me-1"></i> Doğru Tahmin
+                                </button>
+                                <button class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-circle me-1"></i> Yanlış Tahmin
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+        }
+
+        .form-control-lg {
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s;
+        }
+
+            .form-control-lg:focus {
+                border-color: #3a7bd5;
+                box-shadow: 0 0 0 0.25rem rgba(58, 123, 213, 0.25);
+            }
+
+        .btn-primary {
+            border-radius: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+
+        .card {
+            transition: transform 0.3s;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+            }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Form validation
+        (function () {
+            'use strict'
+            const forms = document.querySelectorAll('.needs-validation')
+
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+}

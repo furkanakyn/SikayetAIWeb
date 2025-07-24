@@ -1,0 +1,10 @@
+su kesintisi -> 170 tane
+yol sorunu -> 172 tane
+çevre temizliği -> 175 tane
+gürültü -> 169 tane
+altyapı -> 169 tane
+ulaşım -> 164 tane 
+park bahçe -> 171 tane
+hayvan -> 161 tane
+güvenlik -> 168 tane
+diğer -> 151 tane
