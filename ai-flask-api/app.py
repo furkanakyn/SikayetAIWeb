@@ -9,25 +9,27 @@ import json
 app = Flask(__name__)
 
 # Model yolu
-model_dir = os.path.abspath("trained_model")
+model_dir = os.path.abspath("./trained_model")
 tokenizer = AutoTokenizer.from_pretrained(model_dir, local_files_only=True)
 
 # Tokenizer ve ONNX modeli yükle
 tokenizer = AutoTokenizer.from_pretrained(model_dir)
-onnx_session = InferenceSession("model.onnx")
+onnx_session = InferenceSession("./onnx_model/model.onnx")
 
 # config.json'dan id2label çek
 with open(os.path.join(model_dir, "config.json"), "r", encoding="utf-8") as f:
     config = json.load(f)
 id2label = {int(k): v for k, v in config.get("id2label", {}).items()}
 
+# Tahmin için eşik değeri
+THRESHOLD = 0.4
+
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
         data = request.json
-        print("Gelen veri:", data) 
         text = data['text']
-        
+
         # Tokenize
         inputs = tokenizer(
             text,
@@ -45,22 +47,31 @@ def predict():
 
         # Tahmin süreci
         start_time = time.time()
-        logits = onnx_session.run(None, inputs_onnx)[0]
+        logits = onnx_session.run(None, inputs_onnx)[0]  # (1, label_count)
 
-        # Softmax hesaplama
-        exp_logits = np.exp(logits - np.max(logits, axis=1, keepdims=True))  # Numerik stabilite
-        probs = exp_logits / exp_logits.sum(axis=1, keepdims=True)
+        # Sigmoid ile olasılık hesapla
+        probs = 1 / (1 + np.exp(-logits))
 
-        pred_idx = int(np.argmax(probs[0]))
+        # Eşik üstü olan etiketleri al
+        pred_indices = np.where(probs[0] >= THRESHOLD)[0]
+
+        if len(pred_indices) == 0:
+            labels = ["Eşik altında: Etiket yok"]
+            confidences = []
+        else:
+            labels = [id2label[idx] for idx in pred_indices]
+            confidences = [float(probs[0][idx]) for idx in pred_indices]
+
         latency = (time.time() - start_time) * 1000  # ms cinsinden
 
         response = {
-            "label": id2label.get(pred_idx, "bilinmeyen"),
-            "confidence": float(probs[0][pred_idx]),
+            "labels": labels,
+            "confidences": confidences,
             "latency_ms": latency,
             "status": "success"
         }
         print("Tahmin sonucu:", response)
+
     except Exception as e:
         response = {
             "status": "error",
