@@ -1,24 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 using SikayetAIWeb.Models;
+using SikayetAIWeb.Services;
 
 namespace SikayetAIWeb.Controllers
 {
     public class ComplaintController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly HttpClient _httpClient;
+        private readonly ComplaintService _complaintService;
 
-        public ComplaintController(ApplicationDbContext context, IHttpClientFactory httpClientFactory)
+        public ComplaintController(ComplaintService complaintService)
         {
-            _context = context;
-            _httpClient = httpClientFactory.CreateClient();
-            _httpClient.BaseAddress = new Uri("http://localhost:5000");
+            _complaintService = complaintService;
         }
 
         [HttpGet]
@@ -28,46 +20,82 @@ namespace SikayetAIWeb.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Text")] Complaint complaint)
+        public IActionResult Create(Complaint complaint)
         {
-            if (ModelState.IsValid)
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login", "Auth");
+
+            complaint.UserId = userId.Value;
+            _complaintService.CreateComplaint(complaint);
+            return RedirectToAction("MyComplaints");
+        }
+
+        [HttpGet]
+        public IActionResult MyComplaints()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login", "Auth");
+
+            var complaints = _complaintService.GetUserComplaints(userId.Value);
+            return View(complaints);
+        }
+
+        [HttpGet]
+        public IActionResult DepartmentComplaints()
+        {
+            var userType = HttpContext.Session.GetString("UserType");
+            if (string.IsNullOrEmpty(userType) ||
+                (userType != UserType.Municipality.ToString() &&
+                 userType != UserType.Admin.ToString()))
             {
-                try
-                {
-                    // Flask API'ye istek gönder
-                    var response = await _httpClient.PostAsJsonAsync("/predict", new { text = complaint.Text });
-                    Console.WriteLine("Gelen metin: " + complaint.Text);
-                    response.EnsureSuccessStatusCode();
-
-                    var result = await response.Content.ReadFromJsonAsync<PredictionResponse>();
-
-                    // Veritabanına kaydet
-                    complaint.Category = result?.Label ?? "diğer";
-                    complaint.CreatedAt = DateTime.Now;
-
-                    _context.Add(complaint);
-                    await _context.SaveChangesAsync();
-
-                    return RedirectToAction(nameof(List));
-                }
-                catch (HttpRequestException ex)
-                {
-                    ModelState.AddModelError("", $"API hatası: {ex.Message}");
-                }
+                return RedirectToAction("Login", "Auth");
             }
+
+            var complaints = _complaintService.GetDepartmentComplaints(
+                Enum.Parse<UserType>(userType),
+                null); // Add category filter if needed
+
+            return View(complaints);
+        }
+
+        [HttpPost]
+        public IActionResult AddResponse(int complaintId, string message)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login", "Auth");
+
+            var response = new Response
+            {
+                ComplaintId = complaintId,
+                ResponderId = userId.Value,
+                Message = message
+            };
+
+            _complaintService.AddResponse(response);
+            return RedirectToAction("Details", new { id = complaintId });
+        }
+
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login", "Auth");
+
+            var complaint = _complaintService.GetComplaintDetails(id);
+            if (complaint == null) return NotFound();
+
+            // Check if user has access
+            var userType = HttpContext.Session.GetString("UserType");
+            if (complaint.UserId != userId.Value &&
+                userType != UserType.Municipality.ToString() &&
+                userType != UserType.Admin.ToString())
+            {
+                return Forbid();
+            }
+
+            var responses = _complaintService.GetComplaintResponses(id, userId.Value);
+            ViewBag.Responses = responses;
             return View(complaint);
         }
-
-        public async Task<IActionResult> List()
-        {
-            return View(await _context.Complaints.OrderByDescending(c => c.CreatedAt).ToListAsync());
-        }
-    }
-
-    public class PredictionResponse
-    {
-        public string Label { get; set; }
-        public float Confidence { get; set; }
     }
 }

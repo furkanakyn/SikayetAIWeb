@@ -1,12 +1,48 @@
-﻿@{
-    ViewData["Title"] = "Yeni Şikayet";
-}
-<h2>Yeni Şikayet</h2>
+﻿@model Complaint
 
-<form method="post" asp-controller="Complaint" asp-action="Create">
-    <div class="form-group">
-        <label for="text">Şikayet:</label>
-        <textarea name="text" class="form-control" rows="4" required></textarea>
+@{
+    ViewData["Title"] = "Yeni Şikayet Oluştur";
+}
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h3>@ViewData["Title"]</h3>
     </div>
-    <button type="submit" class="btn btn-primary">Gönder</button>
-</form>
+    <div class="card-body">
+        <form asp-action="Create">
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label">Başlık</label>
+                <input asp-for="Title" class="form-control" required>
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Açıklama</label>
+                <textarea asp-for="Description" class="form-control" rows="4" required></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Category" class="form-label">Kategori</label>
+                    <select asp-for="Category" class="form-select" required>
+                        <option value="">Seçiniz</option>
+                        <option value="Altyapı">Altyapı</option>
+                        <option value="Çevre">Çevre</option>
+                        <option value="Ulaşım">Ulaşım</option>
+                        <option value="Gürültü">Gürültü</option>
+                        <option value="Diğer">Diğer</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Location" class="form-label">Konum</label>
+                    <input asp-for="Location" class="form-control">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Gönder</button>
+            <a asp-action="MyComplaints" class="btn btn-secondary">İptal</a>
+        </form>
+    </div>
+</div>

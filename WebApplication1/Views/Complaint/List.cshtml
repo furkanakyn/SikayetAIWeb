@@ -1,22 +1,60 @@
-﻿@model List<Complaint>
-<h2>Gelen Şikayetler</h2>
+﻿@model IEnumerable<Complaint>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Metin</th>
-            <th>Kategori</th>
-            <th>Tarih</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+@{
+    ViewData["Title"] = "Şikayetlerim";
+}
+
+<h3>@ViewData["Title"]</h3>
+<hr>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        Henüz hiç şikayet oluşturmadınız.
+        <a asp-action="Create" class="alert-link">Yeni şikayet oluşturmak için tıklayın</a>
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var complaint in Model)
         {
-            <tr>
-                <td>@item.Text</td>
-                <td>@item.Category</td>
-                <td>@item.CreatedAt.ToShortDateString()</td>
-            </tr>
+            <div class="col-md-6 mb-4">
+                <div class="card complaint-card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">@complaint.Title</span>
+                        <span class="badge @GetStatusClass(complaint.Status) status-badge">
+                            @complaint.Status
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@complaint.Description</p>
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span>@complaint.Category</span>
+                            <span>@complaint.CreatedAt.ToString("dd MMM yyyy")</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a asp-action="Details" asp-route-id="@complaint.Id" class="btn btn-sm btn-outline-primary">
+                            Detayları Görüntüle
+                        </a>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+}
+
+@functions {
+    string GetStatusClass(ComplaintStatus status)
+    {
+        return status switch
+        {
+            ComplaintStatus.Pending => "bg-secondary",
+            ComplaintStatus.InProgress => "bg-warning text-dark",
+            ComplaintStatus.Resolved => "bg-success",
+            ComplaintStatus.Rejected => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+}
