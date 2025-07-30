@@ -31,6 +31,23 @@ body {
     line-height: 1.7;
 }
 
+/* Flexbox Utilities */
+.d-flex {
+    display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.min-vh-100 {
+    min-height: 100vh;
+}
+
+.flex-grow-1 {
+    flex-grow: 1;
+}
+
 /* Hero Section */
 .hero-section {
     position: relative;
@@ -45,7 +62,6 @@ body {
     background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
 }
 
-/* Mevcut gradient ve wave pattern korunuyor, ancak renkler yeni palete uygun hale getirildi */
 .gradient-bg-light {
     position: absolute;
     top: 0;
@@ -105,33 +121,41 @@ body {
         color: var(--text-medium);
     }
 
-.hero-buttons .btn {
-    margin: 0 18px;
-    padding: 16px 36px; /* Buton boyutlarý güncellendi */
-    font-size: 1.15em; /* Metin boyutu güncellendi */
-    border-radius: 50px;
-    font-family: var(--font-heading);
-    font-weight: 600;
-    text-transform: none;
-    letter-spacing: 0;
+.hero-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Navigasyon */
+    .hero-buttons .btn {
+        margin: 0 18px;
+        padding: 16px 36px;
+        font-size: 1.15em;
+        border-radius: 50px;
+        font-family: var(--font-heading);
+        font-weight: 600;
+        text-transform: none;
+        letter-spacing: 0;
+    }
+
+
+/* Navigasyon - Burasý kritik! */
 .navbar {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Logo sola, menü saða */
     align-items: center;
     padding: 22px 60px;
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.95); /* Daha az þeffaf */
+    background: rgba(255, 255, 255, 0.95);
     transition: background var(--transition-speed) var(--transition-ease), padding var(--transition-speed) var(--transition-ease), box-shadow var(--transition-speed) var(--transition-ease);
-    backdrop-filter: blur(8px); /* Hafif blur */
+    backdrop-filter: blur(8px);
     box-shadow: 0 2px 10px var(--shadow-light);
     border-bottom: 1px solid var(--border-color);
+    box-sizing: border-box; /* Padding ve border geniþliðe dahil */
 }
 
     .navbar.scrolled {
@@ -160,13 +184,27 @@ body {
 .nav-links {
     list-style: none;
     display: flex;
+    align-items: center;
     margin: 0;
     padding: 0;
+    flex-wrap: nowrap; /* Menü öðelerinin yeni satýra geçmesini engelle */
+    flex-shrink: 0; /* Nav linklerin küçülmesini engelle */
+    width: auto; /* Ýçeriði kadar geniþlik almasýný saðla */
+    box-sizing: border-box; /* Padding ve border geniþliðe dahil */
+    margin-left: auto; /* Tüm linkleri ve butonlarý saða yasla */
 }
 
     .nav-links li {
-        margin-left: 30px; /* Kenar boþluðu azaltýldý */
+        margin-left: 25px; /* Her bir menü öðesi arasýna boþluk */
+        display: flex;
+        align-items: center;
+        flex-shrink: 0; /* Li öðelerinin küçülmesini engelle */
     }
+
+        /* Ýlk li elementi (genellikle Kayýt Ol butonu veya ilk menü öðesi) için sol marjin sýfýrla */
+        .nav-links li:first-child {
+            margin-left: 0;
+        }
 
         .nav-links li a {
             color: var(--text-medium);
@@ -199,10 +237,11 @@ body {
                 width: 100%;
             }
 
-        .nav-links li .btn-text-link { /* Þikayet Gönder linki için özel stil */
+        .nav-links li .btn-text-link {
             color: var(--accent-dark);
             font-weight: 600;
             padding: 0;
+            line-height: normal;
         }
 
             .nav-links li .btn-text-link:hover {
@@ -210,35 +249,55 @@ body {
                 transform: translateY(-2px);
             }
 
-            .nav-links li .btn-text-link::after { /* Alt çizgi kaldýrýldý */
+            .nav-links li .btn-text-link::after {
                 display: none;
             }
 
-
-/* Buton Stilleri */
+/* Buton Stilleri - ANAHTAR GÜNCELLEME BURADA! */
 .btn {
-    display: inline-block;
-    padding: 12px 28px; /* Buton boyutlarý daha orantýlý hale getirildi */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
     text-decoration: none;
-    border-radius: 8px;
+    border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transition-speed) var(--transition-ease);
     border: none;
     text-transform: none;
-    letter-spacing: 0.5px; /* Hafif harf aralýðý */
-    font-family: var(--font-heading); /* Buton fontu baþlýk fontu gibi */
-    font-size: 1.05em; /* Buton metin boyutu */
+    letter-spacing: 0.3px;
+    font-family: var(--font-heading);
+    font-size: 0.9em;
     box-shadow: 0 4px 10px var(--shadow-light);
+    height: auto;
+    white-space: nowrap;
+    min-width: 85px;
+    box-sizing: border-box;
 }
 
+/* Giriþ Yap butonunun ana stili */
 .btn-primary-filled {
     background: var(--accent-dark);
-    color: var(--text-light);
+    /* Buradaki color özelliði, butonun temel rengini ayarlar */
+    color: var(--text-light) !important; /* !!! Metin rengini garanti altýna almak için !important eklendi !!! */
     position: relative;
     overflow: hidden;
     z-index: 1;
 }
+
+    /* Eðer HTML'de "Giriþ Yap" metni bir <a> etiketi içindeyse (ki bu olasý) */
+    /* bu kural daha yüksek öncelikle renk atamasý yapar. */
+    .btn-primary-filled a {
+        color: var(--text-light) !important;
+    }
+
+    /* Eðer HTML'de "Giriþ Yap" metni bir <span> etiketi içindeyse (örneðin: <button><span>Giriþ Yap</span></button>) */
+    /* bu kural daha yüksek öncelikle renk atamasý yapar. */
+    .btn-primary-filled span {
+        color: var(--text-light) !important;
+    }
+
 
     .btn-primary-filled::before {
         content: '';
@@ -247,7 +306,7 @@ body {
         left: 0;
         width: 100%;
         height: 100%;
-        background: var(--accent-light); /* Hover rengi */
+        background: var(--accent-light);
         opacity: 0;
         transition: opacity var(--transition-speed) var(--transition-ease);
         z-index: -1;
@@ -265,8 +324,9 @@ body {
 .btn-secondary-outline {
     background: transparent;
     color: var(--accent-dark);
-    border: 2px solid var(--accent-dark);
+    border: 1px solid var(--accent-dark);
     box-shadow: 0 0 8px rgba(26, 83, 92, 0.2);
+    padding: 9px 19px;
 }
 
     .btn-secondary-outline:hover {
@@ -329,7 +389,7 @@ body {
         font-weight: 300;
     }
 
-.bg-secondary { /* bg-light-blue yerine bg-secondary kullanýldý */
+.bg-secondary {
     background-color: var(--bg-secondary);
     box-shadow: inset 0 6px 15px rgba(0,0,0,0.03);
 }
@@ -349,7 +409,7 @@ body {
 }
 
 .stat-item, .step-item, .feature-card {
-    background: var(--text-light); /* Beyaz kartlar */
+    background: var(--text-light);
     padding: 35px;
     border-radius: 12px;
     box-shadow: 0 8px 25px var(--shadow-light);
@@ -392,8 +452,8 @@ body {
         margin: 0;
     }
 
-/* Form Stilleri */
-.complaint-form, .contact-form, .auth-form {
+/* Form Stilleri (Sadece iletiþim ve auth formlarý kaldý) */
+.contact-form, .auth-form {
     max-width: 700px;
     margin: 40px auto 0 auto;
     background: var(--text-light);
@@ -416,8 +476,6 @@ body {
         font-weight: 500;
     }
 
-.complaint-form input,
-.complaint-form textarea,
 .contact-form input,
 .contact-form textarea,
 .auth-form input {
@@ -432,8 +490,6 @@ body {
     transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
 }
 
-    .complaint-form input::placeholder,
-    .complaint-form textarea::placeholder,
     .contact-form input::placeholder,
     .contact-form textarea::placeholder,
     .auth-form input::placeholder {
@@ -441,8 +497,6 @@ body {
         opacity: 0.7;
     }
 
-    .complaint-form input:focus,
-    .complaint-form textarea:focus,
     .contact-form input:focus,
     .contact-form textarea:focus,
     .auth-form input:focus {
@@ -451,7 +505,6 @@ body {
         outline: none;
     }
 
-.complaint-form button,
 .contact-form button,
 .auth-form button {
     width: 100%;
@@ -461,128 +514,6 @@ body {
     border-radius: 8px;
 }
 
-/* Þikayetlerim Paneli */
-.my-complaints-dashboard {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-top: 50px;
-}
-
-.complaint-card {
-    background: var(--text-light);
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px var(--shadow-light);
-    border: 1px solid var(--border-color);
-    text-align: left;
-    transition: transform var(--transition-speed) var(--transition-ease), box-shadow var(--transition-speed) var(--transition-ease);
-}
-
-    .complaint-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px var(--shadow-medium);
-    }
-
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-    .card-header h3 {
-        margin: 0;
-        font-family: var(--font-heading);
-        font-size: 1.4em;
-        color: var(--text-dark);
-    }
-
-.status-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.85em;
-    font-weight: 600;
-    color: var(--text-light);
-}
-
-.status-pending {
-    background-color: #F39C12; /* Amber */
-}
-
-.status-in-progress {
-    background-color: var(--accent-dark);
-}
-
-.status-resolved {
-    background-color: #2ECC71; /* Zümrüt Yeþil */
-}
-
-.card-body p {
-    margin: 8px 0;
-    font-size: 0.95em;
-    color: var(--text-medium);
-}
-
-.complaint-snippet {
-    font-style: italic;
-    color: var(--text-medium);
-    opacity: 0.8;
-    margin-top: 15px;
-}
-
-.complaint-card .btn-small {
-    margin-top: 20px;
-    width: auto;
-}
-
-.note {
-    margin-top: 40px;
-    font-size: 0.9em;
-    color: var(--text-medium);
-    font-style: italic;
-}
-
-/* Footer */
-footer {
-    background: var(--bg-secondary);
-    color: var(--text-medium);
-    padding: 35px 0;
-    text-align: center;
-    font-size: 0.9em;
-    border-top: 1px solid var(--border-color);
-    box-shadow: inset 0 4px 10px rgba(0,0,0,0.02);
-}
-
-    footer .container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        flex-direction: row;
-    }
-
-    footer p {
-        margin: 0;
-    }
-
-.social-links {
-    margin-top: 0;
-}
-
-    .social-links a {
-        color: var(--text-medium);
-        font-size: 1.7em;
-        margin: 0 12px;
-        transition: color var(--transition-speed) var(--transition-ease), transform var(--transition-speed) var(--transition-ease);
-    }
-
-        .social-links a:hover {
-            color: var(--accent-dark);
-            transform: translateY(-4px) scale(1.05);
-        }
 
 /* Animasyonlar */
 @keyframes fadeInSlideUp {
@@ -620,7 +551,7 @@ footer {
 }
 
 /* Wobble animasyonu sadece form gönderiminde */
-.complaint-form.wobble-animation, .contact-form.wobble-animation, .auth-form.wobble-animation {
+.contact-form.wobble-animation, .auth-form.wobble-animation {
     animation: wobble 0.6s ease-in-out;
 }
 
@@ -724,27 +655,27 @@ footer {
 
 /* Modal (Popup Pencere) Stilleri */
 .modal {
-    display: none; /* Varsayýlan olarak gizli */
-    position: fixed; /* Ekraný kaplar */
-    z-index: 1002; /* Navigasyonun üzerinde */
+    display: none;
+    position: fixed;
+    z-index: 1002;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto; /* Ýçerik taþarsa kaydýrma çubuðu */
-    background-color: rgba(0, 0, 0, 0.6); /* Yarý þeffaf siyah arka plan */
-    backdrop-filter: blur(8px); /* Hafif bulanýklýk */
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
     animation: fadeIn 0.3s ease-out forwards;
 }
 
 .modal-content {
     background-color: var(--bg-primary);
-    margin: 5% auto; /* Dikeyde ortalama, yatayda otomatik - Yüksekliði ayarlandý */
+    margin: 5% auto;
     padding: 30px;
     border-radius: 15px;
     box-shadow: 0 10px 40px var(--shadow-strong);
-    width: 90%; /* Geniþlik */
-    max-width: 550px; /* Maksimum geniþlik - Auth formlarý için daraltýldý */
+    width: 90%;
+    max-width: 550px;
     position: relative;
     animation: slideInFromTop 0.4s ease-out forwards;
     text-align: left;
@@ -855,14 +786,15 @@ footer {
     }
 
     .nav-links li {
-        margin-left: 25px;
+        margin-left: 15px;
     }
-        /* Azaltýldý */
-        .nav-links li .btn {
-            padding: 10px 22px;
-            font-size: 0.95em;
-        }
-    /* Butonlar küçültüldü */
+
+    .btn {
+        padding: 9px 18px;
+        font-size: 0.88em;
+        min-width: 80px;
+    }
+
     .section h2 {
         font-size: 2.8em;
     }
@@ -886,26 +818,30 @@ footer {
         margin-bottom: 40px;
     }
 
-    .hero-buttons .btn {
-        padding: 14px 28px;
-        font-size: 1.05em;
-        margin: 0 10px;
+    .hero-buttons {
+        flex-direction: column;
     }
-    /* Mobil buton boyutlarý */
+
+        .hero-buttons .btn {
+            padding: 14px 28px;
+            font-size: 1.05em;
+            margin: 10px 0;
+        }
 
     .navbar {
         padding: 15px 30px;
     }
 
     .nav-links li {
-        margin-left: 18px;
+        margin-left: 10px;
     }
-        /* Daha da azaltýldý */
-        .nav-links li .btn {
-            padding: 8px 18px;
-            font-size: 0.9em;
-        }
-    /* Daha da küçültüldü */
+
+    .btn {
+        padding: 8px 15px;
+        font-size: 0.82em;
+        min-width: 75px;
+    }
+
     .section {
         padding: 70px 0;
     }
@@ -920,13 +856,13 @@ footer {
             max-width: 650px;
         }
 
-    .stats-grid, .workflow-steps, .features-grid, .my-complaints-dashboard {
+    .stats-grid, .workflow-steps, .features-grid {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 25px;
         margin-top: 40px;
     }
 
-    .stat-item, .step-item, .feature-card, .complaint-card {
+    .stat-item, .step-item, .feature-card {
         padding: 30px;
     }
 
@@ -938,7 +874,7 @@ footer {
             font-size: 1.5em;
         }
 
-    .complaint-form, .contact-form, .auth-form {
+    .contact-form, .auth-form {
         padding: 35px;
     }
 
@@ -946,28 +882,14 @@ footer {
         font-size: 1em;
     }
 
-    .complaint-form input, .complaint-form textarea, .contact-form input, .contact-form textarea, .auth-form input {
+    .contact-form input, .contact-form textarea, .auth-form input {
         padding: 14px;
         font-size: 0.95em;
     }
 
-    .complaint-form button, .contact-form button, .auth-form button {
+    .contact-form button, .auth-form button {
         padding: 14px;
         font-size: 1em;
-    }
-
-    footer .social-links {
-        margin-top: 15px;
-        width: 100%;
-        text-align: center;
-    }
-
-    footer .container {
-        flex-direction: column;
-    }
-
-    footer p {
-        margin-bottom: 10px;
     }
 }
 
@@ -1030,46 +952,11 @@ footer {
                 width: 80%;
                 max-width: 250px;
             }
-    /* Mobil navbar butonlarý */
+
     .menu-toggle {
         display: flex;
         position: absolute;
         right: 15px;
         top: 15px;
-    }
-
-    .section {
-        padding: 50px 0;
-    }
-
-        .section h2 {
-            font-size: 2.2em;
-            margin-bottom: 25px;
-        }
-
-    .stats-grid, .workflow-steps, .features-grid, .my-complaints-dashboard {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        margin-top: 30px;
-    }
-
-    .stat-item, .step-item, .feature-card, .complaint-card {
-        padding: 25px;
-    }
-
-        .stat-item i, .step-item i, .feature-card i {
-            font-size: 2.5em;
-        }
-
-        .stat-item h3, .step-item h3, .feature-card h3 {
-            font-size: 1.3em;
-        }
-
-    .complaint-form, .contact-form, .auth-form {
-        padding: 25px;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
     }
 }

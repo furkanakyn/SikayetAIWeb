@@ -15,7 +15,7 @@ document.getElementById('mobile-menu').addEventListener('click', function () {
     navLinks.classList.toggle('active');
 });
 
-// Scroll Reveal Efekti (Mevcut hali korunuyor)
+// Scroll Reveal Efekti
 const sections = document.querySelectorAll('.section.scroll-reveal');
 
 const revealSection = function (entries, observer) {
@@ -58,7 +58,8 @@ const complaintModal = document.getElementById('complaintModal'); // Şikayet de
 
 const loginNavBtn = document.getElementById('loginNavBtn');
 const registerNavBtn = document.getElementById('registerNavBtn');
-const submitComplaintNav = document.getElementById('submitComplaintNav');
+const submitComplaintNav = document.getElementById('submitComplaintNav'); // Navbar'daki "Şikayet Gönder" linki
+const heroSubmitBtn = document.getElementById('heroSubmitBtn'); // Hero section'daki "Şikayetini Şimdi Gönder" butonu
 
 const showRegisterFromLogin = document.getElementById('showRegisterFromLogin');
 const showLoginFromRegister = document.getElementById('showLoginFromRegister');
@@ -68,7 +69,10 @@ document.querySelectorAll('.modal .close-button, .modal .modal-close-btn').forEa
     btn.addEventListener('click', () => {
         loginModal.style.display = 'none';
         registerModal.style.display = 'none';
-        complaintModal.style.display = 'none';
+        // complaintModal.style.display = 'none'; // Şikayetlerim bölümü kaldırıldığı için burası yoruma alındı.
+        if (complaintModal) { // complaintModal'ın varlığını kontrol et
+            complaintModal.style.display = 'none';
+        }
     });
 });
 
@@ -78,7 +82,7 @@ window.addEventListener('click', function (event) {
         loginModal.style.display = 'none';
     } else if (event.target == registerModal) {
         registerModal.style.display = 'none';
-    } else if (event.target == complaintModal) {
+    } else if (event.target == complaintModal && complaintModal) { // complaintModal'ın varlığını kontrol et
         complaintModal.style.display = 'none';
     }
 });
@@ -120,44 +124,33 @@ if (showLoginFromRegister) {
     });
 }
 
-// Şikayet Gönder butonu (Navbar) - Kullanıcı girişi gerektirecek
-if (submitComplaintNav) {
-    submitComplaintNav.addEventListener('click', (e) => {
-        e.preventDefault();
-        // Varsayılan olarak kullanıcı giriş yapmamış kabul edelim.
-        // Gerçek uygulamada burada bir kimlik doğrulama kontrolü yapılmalı (örn. isUserLoggedIn flag).
-        const isUserLoggedIn = false; // BU DEĞİŞKENİ GERÇEK UYGULAMANIZDA SUNUCU TARAFINDAN KONTROL EDİN
+// Navbar "Şikayet Gönder" butonu ve Hero Section'daki "Şikayetini Şimdi Gönder" butonu
+// Bu butonlar, kullanıcı giriş yapmadığı sürece Giriş Modalını açacak.
+[submitComplaintNav, heroSubmitBtn].forEach(button => {
+    if (button) {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            // BURADA GERÇEK KİMLİK DOĞRULAMA KONTROLÜ YAPILMALI
+            const isUserLoggedIn = false; // Örnek olarak false ayarlandı.
+            // Gerçekte, bu değeri sunucudan almalısınız (örn. bir cookie, localStorage veya API çağrısı ile)
 
-        if (!isUserLoggedIn) {
-            alert("Şikayet göndermek için lütfen giriş yapın veya kayıt olun.");
-            loginModal.style.display = 'block'; // Giriş modalını aç
-        } else {
-            // Kullanıcı giriş yapmışsa, şikayet gönderme sayfasına yönlendir veya formu göster
-            // Şu an için bir yere yönlendirmiyoruz, bu sadece bir UI/UX akış örneği.
-            alert("Şikayet gönderme formu buraya gelecek. (Kullanıcı giriş yapmış varsayılıyor)");
-            // window.location.href = "#sikayet-gonder"; // Eğer aynı sayfadaki bölüme yönlendirecekse
-        }
-    });
-}
+            if (!isUserLoggedIn) {
+                alert("Şikayet göndermek için lütfen giriş yapın veya kayıt olun.");
+                loginModal.style.display = 'block'; // Giriş modalını aç
+            } else {
+                // Kullanıcı giriş yapmışsa, şikayet gönderme formunun bulunduğu sayfaya yönlendirin
+                // veya burada bir şikayet formu modalı açın (şu an yok, eklenebilir)
+                alert("Kullanıcı giriş yaptı! Şikayet gönderme formu buraya gelecek.");
+                // Örnek: window.location.href = "/Home/SubmitComplaint";
+            }
+        });
+    }
+});
 
-// Ana sayfadaki "Şikayetini Şimdi Gönder" butonu (Hero Section)
-const heroSubmitBtn = document.querySelector('.hero-buttons .btn-primary-filled');
-if (heroSubmitBtn) {
-    heroSubmitBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const isUserLoggedIn = false; // BU DEĞİŞKENİ GERÇEK UYGULAMANIZDA SUNUCU TARAFINDAN KONTROL EDİN
 
-        if (!isUserLoggedIn) {
-            alert("Şikayet göndermek için lütfen giriş yapın veya kayıt olun.");
-            loginModal.style.display = 'block'; // Giriş modalını aç
-        } else {
-            alert("Şikayet gönderme formu buraya gelecek. (Kullanıcı giriş yapmış varsayılıyor)");
-        }
-    });
-}
-
-// Form gönderildiğinde wobble animasyonu (Login, Register, Complaint, Contact)
-document.querySelectorAll('.auth-form, .complaint-form, .contact-form').forEach(form => {
+// Form gönderildiğinde wobble animasyonu (Login, Register, Contact)
+// Şikayet formu kaldırıldığı için bu kısım güncellendi.
+document.querySelectorAll('.auth-form, .contact-form').forEach(form => {
     form.addEventListener('submit', function (e) {
         e.preventDefault();
         this.classList.add('wobble-animation');
@@ -165,14 +158,11 @@ document.querySelectorAll('.auth-form, .complaint-form, .contact-form').forEach(
             this.classList.remove('wobble-animation');
             // Gerçek uygulamada burada AJAX ile form gönderimi ve sunucu tarafı kontrolü yapılacaktır.
             if (this.classList.contains('auth-form')) {
-                // Giriş veya kayıt başarılıysa modalı kapat, kullanıcıyı giriş yapmış say
                 alert(this.querySelector('h3').textContent + ' Başarılı! Hoş geldiniz.');
                 loginModal.style.display = 'none';
                 registerModal.style.display = 'none';
                 // Kullanıcıyı giriş yapmış duruma getir (frontend için dummy)
-                // Gerçekte: localStorage.setItem('isLoggedIn', 'true');
-            } else if (this.classList.contains('complaint-form')) {
-                alert('Şikayetiniz başarıyla gönderildi! Kayıtlarınızı ve cevapları takip etmek için "Şikayetlerim" bölümünü ziyaret edebilirsiniz.');
+                // Gerçekte: localStorage.setItem('isLoggedIn', 'true'); veya sunucu ile kimlik doğrulama
             } else if (this.classList.contains('contact-form')) {
                 alert('Mesajınız başarıyla gönderildi!');
             }
@@ -182,6 +172,8 @@ document.querySelectorAll('.auth-form, .complaint-form, .contact-form').forEach(
 });
 
 // Şikayet Detay Modalını Açma (Mevcut işlevsellik)
+// "Şikayetlerim" bölümü kaldırıldığı için bu bölüm tamamen kaldırılıyor.
+/*
 const viewDetailsButtons = document.querySelectorAll('.view-details-btn');
 
 // Örnek şikayet verileri (Gerçek uygulamada API'den çekilir)
@@ -213,16 +205,15 @@ const dummyComplaints = {
 };
 
 viewDetailsButtons.forEach(button => {
-    button.addEventListener('click', function () {
+    button.addEventListener('click', function() {
         const complaintId = this.dataset.complaintId;
         const complaint = dummyComplaints[complaintId];
 
         if (complaint) {
             document.getElementById('modalComplaintTitle').textContent = complaint.title;
             document.getElementById('modalComplaintStatus').textContent = complaint.status;
-            // Statü rengini de güncelle
             const statusBadge = document.getElementById('modalComplaintStatus');
-            statusBadge.className = 'status-badge'; // Önceki sınıfları temizle
+            statusBadge.className = 'status-badge';
             if (complaint.status === 'Beklemede') {
                 statusBadge.classList.add('status-pending');
             } else if (complaint.status === 'İşlemde') {
@@ -238,6 +229,7 @@ viewDetailsButtons.forEach(button => {
         }
     });
 });
+*/
 
 
 // Particles.js konfigürasyonu (Yeni renk paleti ile güncellendi)

@@ -4,232 +4,208 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ŞikayetAI - Akıllı Şikayet Yönetimi</title>
+    <!-- Buradaki style.css ve app.js, ASP.NET Core projesindeki /wwwroot/css/site.css ve /wwwroot/js/app.js'e karşılık gelir. -->
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-<body>
-    <div class="hero-section">
-        <div class="gradient-bg-light"></div>
-        <div class="subtle-wave-pattern"></div>
-        <div class="particles-js" id="particles-js"></div>
-
-        <header class="main-header">
-            <nav class="navbar">
-                <div class="logo">
-                    <i class="fas fa-lightbulb"></i> ŞikayetAI
-                </div>
-                <ul class="nav-links">
-                    <li><a href="#hakkimizda">Hakkımızda</a></li>
-                    <li><a href="#nasil-calisir">Nasıl Çalışır?</a></li>
-                    <li><a href="#ozellikler">Özellikler</a></li>
-                    <li><a href="#sikayet-gonder">Şikayet Gönder</a></li>
-                    <li><a href="#sikayetlerim">Şikayetlerim</a></li>
-                    <li><a href="#" class="btn-cta btn-primary-filled">Giriş Yap</a></li>
-                </ul>
-                <div class="menu-toggle" id="mobile-menu">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                </div>
-            </nav>
-        </header>
-
-        <div class="hero-content">
-            <h1>Şikayetleriniz Çözüme Dönüşsün. Kolayca. Hızla.</h1>
-            <p>Yapay zeka gücüyle şikayetlerinizi doğru adrese ulaştırın, çözümleri takip edin.</p>
-            <div class="hero-buttons">
-                <a href="#sikayet-gonder" class="btn btn-primary-filled">Şikayetini Şimdi Gönder</a>
-                <a href="#nasil-calisir" class="btn btn-secondary-outline">Nasıl Çalışır?</a>
+<body class="d-flex flex-column min-vh-100">
+    <!-- ANA HEADER BÖLÜMÜ -->
+    <header class="main-header">
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-lightbulb"></i> ŞikayetAI
             </div>
+            <ul class="nav-links">
+                <li><a href="#hakkimizda">Hakkımızda</a></li>
+                <li><a href="#nasil-calisir">Nasıl Çalışır?</a></li>
+                <li><a href="#ozellikler">Özellikler</a></li>
+                <li><a href="#" id="submitComplaintNav" class="btn-text-link">Şikayet Gönder</a></li>
+                <!-- "Şikayetlerim" linki kaldırıldı. -->
+                <li><a href="#" class="btn btn-secondary-outline" id="registerNavBtn">Kayıt Ol</a></li>
+                <li><a href="#" class="btn btn-primary-filled" id="loginNavBtn">Giriş Yap</a></li>
+            </ul>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ANA İÇERİK BÖLÜMÜ -->
+    <main role="main" class="flex-grow-1">
+        <div class="hero-section">
+            <div class="gradient-bg-light"></div>
+            <div class="subtle-wave-pattern"></div>
+            <div class="particles-js" id="particles-js"></div>
+
+            <div class="hero-content">
+                <h1>Şikayetleriniz Çözüme Dönüşsün. Kolayca. Hızla.</h1>
+                <p>Yapay zeka gücüyle şikayetlerinizi doğru adrese ulaştırın, çözümleri takip edin.</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn btn-primary-filled" id="heroSubmitBtn">Şikayetini Şimdi Gönder</a>
+                    <a href="#nasil-calisir" class="btn btn-secondary-outline">Nasıl Çalışır?</a>
+                </div>
+            </div>
+        </div>
+
+        <section id="hakkimizda" class="section scroll-reveal fade-in-up">
+            <div class="container">
+                <h2>ŞikayetAI: Vatandaş Odaklı Çözümler</h2>
+                <p>ŞikayetAI, belediye ile vatandaş arasındaki iletişimi modernize eden, şeffaf ve etkili bir köprüdür. Gelişmiş yapay zeka algoritmalarımızla, her geri bildirimi anlayarak en doğru birime yönlendirir, böylece sorunlarınızın hızla çözülmesini sağlarız.</p>
+                <div class="stats-grid">
+                    <div class="stat-item slide-in-left">
+                        <i class="fas fa-check-double icon-gradient"></i>
+                        <h3>%99 Doğruluk</h3>
+                        <p>Şikayetleriniz daima doğru adreste.</p>
+                    </div>
+                    <div class="stat-item slide-in-up">
+                        <i class="fas fa-bolt icon-gradient"></i>
+                        <h3>Anında Yönlendirme</h3>
+                        <p>Geri bildirimleriniz bekletilmez.</p>
+                    </div>
+                    <div class="stat-item slide-in-right">
+                        <i class="fas fa-chart-line icon-gradient"></i>
+                        <h3>Tam Şeffaflık</h3>
+                        <p>Şikayetinizin her adımını takip edin.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="nasil-calisir" class="section bg-secondary scroll-reveal fade-in-up">
+            <div class="container">
+                <h2>Adım Adım Çözüme Ulaşın</h2>
+                <div class="workflow-steps">
+                    <div class="step-item pop-in">
+                        <i class="fas fa-edit icon-gradient"></i>
+                        <h3>1. Şikayetini Yaz</h3>
+                        <p>Sorununu açık ve net bir şekilde belirt.</p>
+                    </div>
+                    <div class="step-item pop-in delay-200">
+                        <i class="fas fa-brain icon-gradient"></i>
+                        <h3>2. AI Analiz Etsin</h3>
+                        <p>Yapay zeka şikayetini anlar ve sınıflandırır.</p>
+                    </div>
+                    <div class="step-item pop-in delay-400">
+                        <i class="fas fa-paper-plane icon-gradient"></i>
+                        <h3>3. İlgili Birime İletilsin</h3>
+                        <p>Doğru departmana otomatik olarak yönlendirilir.</p>
+                    </div>
+                    <div class="step-item pop-in delay-600">
+                        <i class="fas fa-check-circle icon-gradient"></i>
+                        <h3>4. Çözümü Takip Et</h3>
+                        <p>Şikayetinin durumunu ve gelen cevapları gör.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ozellikler" class="section scroll-reveal fade-in-up">
+            <div class="container">
+                <h2>ŞikayetAI'nin Güçlü Özellikleri</h2>
+                <div class="features-grid">
+                    <div class="feature-card zoom-in">
+                        <i class="fas fa-tags feature-icon-gradient"></i>
+                        <h3>Akıllı Kategorizasyon</h3>
+                        <p>Şikayetleriniz doğru başlık altında toplanır.</p>
+                    </div>
+                    <div class="feature-card zoom-in delay-100">
+                        <i class="fas fa-comments feature-icon-gradient"></i>
+                        <h3>İletişim Geçmişi</h3>
+                        <p>Tüm şikayetleriniz ve yanıtlarınız tek yerde.</p>
+                    </div>
+                    <div class="feature-card zoom-in delay-200">
+                        <i class="fas fa-bell feature-icon-gradient"></i>
+                        <h3>Anlık Bildirimler</h3>
+                        <p>Şikayetinizin durumu hakkında anında bilgi alın.</p>
+                    </div>
+                    <div class="feature-card zoom-in delay-300">
+                        <i class="fas fa-shield-alt feature-icon-gradient"></i>
+                        <h3>Veri Güvenliği</h3>
+                        <p>Kişisel bilgileriniz en üst düzeyde korunur.</p>
+                    </div>
+                    <div class="feature-card zoom-in delay-400">
+                        <i class="fas fa-map-marker-alt feature-icon-gradient"></i>
+                        <h3>Konum Bazlı Destek</h3>
+                        <p>Gerekirse şikayetinize konum bilgisi ekleyin.</p>
+                    </div>
+                    <div class="feature-card zoom-in delay-500">
+                        <i class="fas fa-file-alt feature-icon-gradient"></i>
+                        <h3>Ek Dosya Yükleme</h3>
+                        <p>Şikayetinizi görsel veya belge ile destekleyin.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="iletisim" class="section bg-secondary scroll-reveal fade-in-up">
+            <div class="container">
+                <h2>Bize Ulaşın</h2>
+                <p>ŞikayetAI hakkında sorularınız, önerileriniz veya destek talepleriniz için bize ulaşmaktan çekinmeyin.</p>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <input type="text" placeholder="Adınız Soyadınız" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="E-posta Adresiniz" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Mesajınız" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary-filled">Mesajı Gönder</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modallar (Popup Pencereler) -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3>Giriş Yap</h3>
+            <form class="auth-form">
+                <div class="form-group">
+                    <label for="loginEmail">E-posta:</label>
+                    <input type="email" id="loginEmail" placeholder="E-posta adresiniz" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Şifre:</label>
+                    <input type="password" id="loginPassword" placeholder="Şifreniz" required>
+                </div>
+                <button type="submit" class="btn btn-primary-filled">Giriş Yap</button>
+            </form>
+            <p class="modal-switch-text">Hesabınız yok mu? <a href="#" id="showRegisterFromLogin">Kayıt Ol</a></p>
         </div>
     </div>
 
-    <section id="hakkimizda" class="section scroll-reveal fade-in-up">
-        <div class="container">
-            <h2>ŞikayetAI: Vatandaş Odaklı Çözümler</h2>
-            <p>ŞikayetAI, belediye ile vatandaş arasındaki iletişimi modernize eden, şeffaf ve etkili bir köprüdür. Gelişmiş yapay zeka algoritmalarımızla, her geri bildirimi anlayarak en doğru birime yönlendirir, böylece sorunlarınızın hızla çözülmesini sağlarız.</p>
-            <div class="stats-grid">
-                <div class="stat-item slide-in-left">
-                    <i class="fas fa-check-double icon-gradient"></i>
-                    <h3>%99 Doğruluk</h3>
-                    <p>Şikayetleriniz daima doğru adreste.</p>
-                </div>
-                <div class="stat-item slide-in-up">
-                    <i class="fas fa-bolt icon-gradient"></i>
-                    <h3>Anında Yönlendirme</h3>
-                    <p>Geri bildirimleriniz bekletilmez.</p>
-                </div>
-                <div class="stat-item slide-in-right">
-                    <i class="fas fa-chart-line icon-gradient"></i>
-                    <h3>Tam Şeffaflık</h3>
-                    <p>Şikayetinizin her adımını takip edin.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="nasil-calisir" class="section bg-light-blue scroll-reveal fade-in-up">
-        <div class="container">
-            <h2>Adım Adım Çözüme Ulaşın</h2>
-            <div class="workflow-steps">
-                <div class="step-item pop-in">
-                    <i class="fas fa-edit icon-gradient"></i>
-                    <h3>1. Şikayetini Yaz</h3>
-                    <p>Sorununu açık ve net bir şekilde belirt.</p>
-                </div>
-                <div class="step-item pop-in delay-200">
-                    <i class="fas fa-brain icon-gradient"></i>
-                    <h3>2. AI Analiz Etsin</h3>
-                    <p>Yapay zeka şikayetini anlar ve sınıflandırır.</p>
-                </div>
-                <div class="step-item pop-in delay-400">
-                    <i class="fas fa-paper-plane icon-gradient"></i>
-                    <h3>3. İlgili Birime İletilsin</h3>
-                    <p>Doğru departmana otomatik olarak yönlendirilir.</p>
-                </div>
-                <div class="step-item pop-in delay-600">
-                    <i class="fas fa-check-circle icon-gradient"></i>
-                    <h3>4. Çözümü Takip Et</h3>
-                    <p>Şikayetinin durumunu ve gelen cevapları gör.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="ozellikler" class="section scroll-reveal fade-in-up">
-        <div class="container">
-            <h2>ŞikayetAI'nin Güçlü Özellikleri</h2>
-            <div class="features-grid">
-                <div class="feature-card zoom-in">
-                    <i class="fas fa-tags feature-icon-gradient"></i>
-                    <h3>Akıllı Kategorizasyon</h3>
-                    <p>Şikayetleriniz doğru başlık altında toplanır.</p>
-                </div>
-                <div class="feature-card zoom-in delay-100">
-                    <i class="fas fa-comments feature-icon-gradient"></i>
-                    <h3>İletişim Geçmişi</h3>
-                    <p>Tüm şikayetleriniz ve yanıtlarınız tek yerde.</p>
-                </div>
-                <div class="feature-card zoom-in delay-200">
-                    <i class="fas fa-bell feature-icon-gradient"></i>
-                    <h3>Anlık Bildirimler</h3>
-                    <p>Şikayetinizin durumu hakkında anında bilgi alın.</p>
-                </div>
-                <div class="feature-card zoom-in delay-300">
-                    <i class="fas fa-shield-alt feature-icon-gradient"></i>
-                    <h3>Veri Güvenliği</h3>
-                    <p>Kişisel bilgileriniz en üst düzeyde korunur.</p>
-                </div>
-                <div class="feature-card zoom-in delay-400">
-                    <i class="fas fa-map-marker-alt feature-icon-gradient"></i>
-                    <h3>Konum Bazlı Destek</h3>
-                    <p>Gerekirse şikayetinize konum bilgisi ekleyin.</p>
-                </div>
-                <div class="feature-card zoom-in delay-500">
-                    <i class="fas fa-file-alt feature-icon-gradient"></i>
-                    <h3>Ek Dosya Yükleme</h3>
-                    <p>Şikayetinizi görsel veya belge ile destekleyin.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="sikayet-gonder" class="section bg-light-blue scroll-reveal fade-in-up">
-        <div class="container">
-            <h2>Şikayetini Kolayca Gönder</h2>
-            <p>Aşağıdaki formu doldurarak şikayetini bize ilet. Yapay zekamız, şikayetini en doğru belediye birimine yönlendirecektir.</p>
-            <form class="complaint-form">
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3>Kayıt Ol</h3>
+            <form class="auth-form">
                 <div class="form-group">
-                    <label for="name">Adınız Soyadınız:</label>
-                    <input type="text" id="name" placeholder="Adınız Soyadınız" required>
+                    <label for="registerName">Adınız Soyadınız:</label>
+                    <input type="text" id="registerName" placeholder="Adınız Soyadınız" required>
                 </div>
                 <div class="form-group">
-                    <label for="email">E-posta Adresiniz:</label>
-                    <input type="email" id="email" placeholder="E-posta Adresiniz" required>
+                    <label for="registerEmail">E-posta:</label>
+                    <input type="email" id="registerEmail" placeholder="E-posta adresiniz" required>
                 </div>
                 <div class="form-group">
-                    <label for="topic">Şikayet Konusu:</label>
-                    <input type="text" id="topic" placeholder="Örn: Yol Bakım, Çevre Temizliği, Gürültü Kirliliği" required>
+                    <label for="registerPassword">Şifre:</label>
+                    <input type="password" id="registerPassword" placeholder="Şifreniz" required>
                 </div>
                 <div class="form-group">
-                    <label for="complaint-text">Şikayetiniz:</label>
-                    <textarea id="complaint-text" placeholder="Şikayetinizi detaylıca buraya yazın..." rows="8" required></textarea>
+                    <label for="confirmPassword">Şifre Tekrar:</label>
+                    <input type="password" id="confirmPassword" placeholder="Şifrenizi tekrar girin" required>
                 </div>
-                <button type="submit" class="btn btn-primary-filled">Şikayeti Gönder</button>
+                <button type="submit" class="btn btn-primary-filled">Kayıt Ol</button>
             </form>
+            <p class="modal-switch-text">Zaten hesabınız var mı? <a href="#" id="showLoginFromRegister">Giriş Yap</a></p>
         </div>
-    </section>
-
-    <section id="sikayetlerim" class="section scroll-reveal fade-in-up">
-        <div class="container">
-            <h2>Şikayetlerim ve Cevaplar</h2>
-            <p>Gönderdiğiniz şikayetleri ve belediyeden gelen yanıtları buradan takip edebilirsiniz.</p>
-            <div class="my-complaints-dashboard">
-                <div class="complaint-card slide-in-left">
-                    <div class="card-header">
-                        <h3>Yol Bakım Talebi - Çukur</h3>
-                        <span class="status-badge status-pending">Beklemede</span>
-                    </div>
-                    <div class="card-body">
-                        <p><strong>Gönderilme Tarihi:</strong> 15.07.2025</p>
-                        <p><strong>Konum:</strong> Cumhuriyet Cad. No: 12</p>
-                        <p class="complaint-snippet">"Sokağımızdaki büyük çukur araçlar için tehlike oluşturuyor..."</p>
-                        <button class="btn-small btn-secondary-outline view-details-btn" data-complaint-id="1">Detayları Gör</button>
-                    </div>
-                </div>
-                <div class="complaint-card slide-in-right delay-100">
-                    <div class="card-header">
-                        <h3>Çevre Temizliği - Çöp Kutusu</h3>
-                        <span class="status-badge status-resolved">Çözüldü</span>
-                    </div>
-                    <div class="card-body">
-                        <p><strong>Gönderilme Tarihi:</strong> 01.07.2025</p>
-                        <p><strong>Konum:</strong> Park Sok. No: 5</p>
-                        <p class="complaint-snippet">"Parktaki çöp kutusu dolmuş ve etrafa yayılıyor..."</p>
-                        <button class="btn-small btn-secondary-outline view-details-btn" data-complaint-id="2">Detayları Gör</button>
-                    </div>
-                </div>
-                <div class="complaint-card slide-in-left delay-200">
-                    <div class="card-header">
-                        <h3>Gürültü Kirliliği - İnşaat</h3>
-                        <span class="status-badge status-in-progress">İşlemde</span>
-                    </div>
-                    <div class="card-body">
-                        <p><strong>Gönderilme Tarihi:</strong> 10.07.2025</p>
-                        <p><strong>Konum:</strong> Barış Mah. İnşaat Alanı</p>
-                        <p class="complaint-snippet">"Gece geç saatlere kadar süren inşaat gürültüsü..."</p>
-                        <button class="btn-small btn-secondary-outline view-details-btn" data-complaint-id="3">Detayları Gör</button>
-                    </div>
-                </div>
-            </div>
-            <p class="note">Daha fazla şikayetinizi görmek için lütfen giriş yapın.</p>
-        </div>
-    </section>
-
-    <section id="iletisim" class="section bg-light-blue scroll-reveal fade-in-up">
-        <div class="container">
-            <h2>Bize Ulaşın</h2>
-            <p>ŞikayetAI hakkında sorularınız, önerileriniz veya destek talepleriniz için bize ulaşmaktan çekinmeyin.</p>
-            <form class="contact-form">
-                <input type="text" placeholder="Adınız Soyadınız" required>
-                <input type="email" placeholder="E-posta Adresiniz" required>
-                <textarea placeholder="Mesajınız" rows="5" required></textarea>
-                <button type="submit" class="btn btn-primary-filled">Mesajı Gönder</button>
-            </form>
-        </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 ŞikayetAI. Tüm Hakları Saklıdır.</p>
-            <div class="social-links">
-                <a href="#"><i class="fab fa-github social-icon-subtle"></i></a>
-                <a href="#"><i class="fab fa-twitter social-icon-subtle delay-100"></i></a>
-                <a href="#"><i class="fab fa-linkedin-in social-icon-subtle delay-200"></i></a>
-            </div>
-        </div>
-    </footer>
+    </div>
 
     <div id="complaintModal" class="modal">
         <div class="modal-content">
@@ -242,7 +218,7 @@
             <p id="modalComplaintDetail"></p>
             <h4>Belediye Cevabı:</h4>
             <p id="modalComplaintResponse">Henüz bir cevap bulunmamaktadır.</p>
-            <button class="btn btn-primary-filled modal-close-btn">Kapat</button>
+            <button class="btn btn-secondary-outline modal-close-btn">Kapat</button>
         </div>
     </div>
 

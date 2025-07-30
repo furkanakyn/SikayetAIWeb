@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ŞikayetAI</title>
 
+    <!-- Google Fonts: Montserrat (başlıklar) ve Open Sans (metinler) -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
 
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+    <!-- Custom Site CSS -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -22,7 +25,7 @@
                 <li><a href="#nasil-calisir">Nasıl Çalışır?</a></li>
                 <li><a href="#ozellikler">Özellikler</a></li>
                 <li><a href="#" id="submitComplaintNav" class="btn-text-link">Şikayet Gönder</a></li>
-                <li><a href="#sikayetlerim">Şikayetlerim</a></li>
+                <!-- "Şikayetlerim" bölümü kaldırıldığı için bu link de kaldırıldı. -->
                 <li><a href="#" class="btn btn-secondary-outline" id="registerNavBtn">Kayıt Ol</a></li>
                 <li><a href="#" class="btn btn-primary-filled" id="loginNavBtn">Giriş Yap</a></li>
             </ul>
@@ -49,6 +52,7 @@
         </div>
     </footer>
 
+    <!-- Giriş ve Kayıt Modalları -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
@@ -95,6 +99,7 @@
         </div>
     </div>
 
+    <!-- Şikayet Detay Modal (Mevcut) -->
     <div id="complaintModal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
@@ -110,8 +115,10 @@
         </div>
     </div>
 
+    <!-- Particles.js JS -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
+    <!-- Custom Site JS -->
     <script src="~/js/app.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
