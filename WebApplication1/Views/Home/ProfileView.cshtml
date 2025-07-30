@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Profili Görüntüle";
+    Layout = "_Layout";
+}
+
+<div class="auth-page d-flex justify-content-center align-items-center">
+    <div class="auth-card card shadow-lg border-0 text-center p-4">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="fas fa-id-card-alt me-2"></i> Profil Bilgilerim</h3>
+        </div>
+        <div class="card-body p-4">
+            <p class="lead mb-4">Hesap bilgileriniz aşağıdadır.</p>
+
+            <div class="text-start mb-4">
+                <p><strong>Tam Adınız:</strong> @Context.Session.GetString("FullName")</p>
+                <p><strong>Kullanıcı Adınız:</strong> @Context.Session.GetString("Username")</p>
+                <p><strong>E-posta Adresiniz:</strong> @Context.Session.GetString("UserEmail")</p>
+                <p><strong>Kullanıcı Türü:</strong> @Context.Session.GetString("UserType")</p>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <a asp-action="ProfileSettings" asp-controller="Home" class="btn btn-primary-filled">Profili Güncelle</a>
+                <a asp-action="MyComplaints" asp-controller="Home" class="btn btn-secondary-outline">Şikayetlerim</a>
+                <a asp-action="Logout" asp-controller="Auth" class="btn btn-link text-danger mt-3">Çıkış Yap</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -52,25 +52,16 @@ sections.forEach(section => {
 });
 
 // --- Modal Pencere İşlevselliği ---
-const loginModal = document.getElementById('loginModal');
-const registerModal = document.getElementById('registerModal');
+const loginRegisterPromptModal = document.getElementById('loginRegisterPromptModal'); // "Şikayet Gönder" için modal
 const complaintModal = document.getElementById('complaintModal'); // Şikayet detayı modalı
 
-const loginNavBtn = document.getElementById('loginNavBtn');
-const registerNavBtn = document.getElementById('registerNavBtn');
-const submitComplaintNav = document.getElementById('submitComplaintNav'); // Navbar'daki "Şikayet Gönder" linki
-const heroSubmitBtn = document.getElementById('heroSubmitBtn'); // Hero section'daki "Şikayetini Şimdi Gönder" butonu
-
-const showRegisterFromLogin = document.getElementById('showRegisterFromLogin');
-const showLoginFromRegister = document.getElementById('showLoginFromRegister');
-
-// Close butonları
+// Close butonları (modalları kapatmak için)
 document.querySelectorAll('.modal .close-button, .modal .modal-close-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-        loginModal.style.display = 'none';
-        registerModal.style.display = 'none';
-        // complaintModal.style.display = 'none'; // Şikayetlerim bölümü kaldırıldığı için burası yoruma alındı.
-        if (complaintModal) { // complaintModal'ın varlığını kontrol et
+        if (loginRegisterPromptModal) {
+            loginRegisterPromptModal.style.display = 'none';
+        }
+        if (complaintModal) {
             complaintModal.style.display = 'none';
         }
     });
@@ -78,68 +69,31 @@ document.querySelectorAll('.modal .close-button, .modal .modal-close-btn').forEa
 
 // Modal dışına tıklayınca kapatma
 window.addEventListener('click', function (event) {
-    if (event.target == loginModal) {
-        loginModal.style.display = 'none';
-    } else if (event.target == registerModal) {
-        registerModal.style.display = 'none';
-    } else if (event.target == complaintModal && complaintModal) { // complaintModal'ın varlığını kontrol et
+    if (event.target == loginRegisterPromptModal) {
+        loginRegisterPromptModal.style.display = 'none';
+    } else if (event.target == complaintModal && complaintModal) {
         complaintModal.style.display = 'none';
     }
 });
 
-
-// Navbar Giriş Yap butonu
-if (loginNavBtn) {
-    loginNavBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        registerModal.style.display = 'none'; // Diğer modalı kapat
-        loginModal.style.display = 'block'; // Giriş modalını aç
-    });
-}
-
-// Navbar Kayıt Ol butonu
-if (registerNavBtn) {
-    registerNavBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        loginModal.style.display = 'none'; // Diğer modalı kapat
-        registerModal.style.display = 'block'; // Kayıt modalını aç
-    });
-}
-
-// Giriş modalından Kayıt ol'a geçiş
-if (showRegisterFromLogin) {
-    showRegisterFromLogin.addEventListener('click', (e) => {
-        e.preventDefault();
-        loginModal.style.display = 'none';
-        registerModal.style.display = 'block';
-    });
-}
-
-// Kayıt modalından Giriş yap'a geçiş
-if (showLoginFromRegister) {
-    showLoginFromRegister.addEventListener('click', (e) => {
-        e.preventDefault();
-        registerModal.style.display = 'none';
-        loginModal.style.display = 'block';
-    });
-}
-
-// Navbar "Şikayet Gönder" butonu ve Hero Section'daki "Şikayetini Şimdi Gönder" butonu
-// Bu butonlar, kullanıcı giriş yapmadığı sürece Giriş Modalını açacak.
+// Anasayfadaki "Şikayet Gönder" butonları için modal açma mantığı
 [submitComplaintNav, heroSubmitBtn].forEach(button => {
     if (button) {
         button.addEventListener('click', (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Varsayılan link davranışını engelle
+
             // BURADA GERÇEK KİMLİK DOĞRULAMA KONTROLÜ YAPILMALI
-            const isUserLoggedIn = false; // Örnek olarak false ayarlandı.
-            // Gerçekte, bu değeri sunucudan almalısınız (örn. bir cookie, localStorage veya API çağrısı ile)
+            // Bu kontrol, sunucudan (örneğin bir API endpoint'i) kullanıcının oturum açıp açmadığını sorgulamalıdır.
+            // Şimdilik varsayılan olarak kullanıcı giriş yapmamış kabul edelim.
+            const isUserLoggedIn = false; // Gerçekte: fetch('/api/Auth/IsLoggedIn').then(res => res.json()).then(data => data.isLoggedIn);
 
             if (!isUserLoggedIn) {
-                alert("Şikayet göndermek için lütfen giriş yapın veya kayıt olun.");
-                loginModal.style.display = 'block'; // Giriş modalını aç
+                // Kullanıcı giriş yapmamışsa, popup modalı aç
+                if (loginRegisterPromptModal) {
+                    loginRegisterPromptModal.style.display = 'block';
+                }
             } else {
-                // Kullanıcı giriş yapmışsa, şikayet gönderme formunun bulunduğu sayfaya yönlendirin
-                // veya burada bir şikayet formu modalı açın (şu an yok, eklenebilir)
+                // Kullanıcı giriş yapmışsa, şikayet gönderme formunun bulunduğu sayfaya yönlendir
                 alert("Kullanıcı giriş yaptı! Şikayet gönderme formu buraya gelecek.");
                 // Örnek: window.location.href = "/Home/SubmitComplaint";
             }
@@ -148,91 +102,21 @@ if (showLoginFromRegister) {
 });
 
 
-// Form gönderildiğinde wobble animasyonu (Login, Register, Contact)
-// Şikayet formu kaldırıldığı için bu kısım güncellendi.
-document.querySelectorAll('.auth-form, .contact-form').forEach(form => {
+// Form gönderildiğinde wobble animasyonu (Sadece İletişim formu)
+document.querySelectorAll('.contact-form').forEach(form => {
     form.addEventListener('submit', function (e) {
         e.preventDefault();
         this.classList.add('wobble-animation');
         this.addEventListener('animationend', () => {
             this.classList.remove('wobble-animation');
             // Gerçek uygulamada burada AJAX ile form gönderimi ve sunucu tarafı kontrolü yapılacaktır.
-            if (this.classList.contains('auth-form')) {
-                alert(this.querySelector('h3').textContent + ' Başarılı! Hoş geldiniz.');
-                loginModal.style.display = 'none';
-                registerModal.style.display = 'none';
-                // Kullanıcıyı giriş yapmış duruma getir (frontend için dummy)
-                // Gerçekte: localStorage.setItem('isLoggedIn', 'true'); veya sunucu ile kimlik doğrulama
-            } else if (this.classList.contains('contact-form')) {
-                alert('Mesajınız başarıyla gönderildi!');
-            }
+            alert('Mesajınız başarıyla gönderildi!');
             this.reset();
         }, { once: true });
     });
 });
 
-// Şikayet Detay Modalını Açma (Mevcut işlevsellik)
-// "Şikayetlerim" bölümü kaldırıldığı için bu bölüm tamamen kaldırılıyor.
-/*
-const viewDetailsButtons = document.querySelectorAll('.view-details-btn');
-
-// Örnek şikayet verileri (Gerçek uygulamada API'den çekilir)
-const dummyComplaints = {
-    1: {
-        title: "Yol Bakım Talebi - Çukur",
-        status: "Beklemede",
-        date: "15.07.2025",
-        location: "Cumhuriyet Cad. No: 12",
-        detail: "Cumhuriyet Caddesi üzerindeki 12 numaralı binanın önünde oluşan büyük çukur, özellikle yağmurlu havalarda araçlar için ciddi bir tehlike oluşturmaktadır. Lastik patlamalarına ve araç hasarlarına yol açmaktadır. Acil müdahale rica olunur.",
-        response: "Şikayetiniz ilgili birime iletilmiştir. En kısa sürede inceleme yapılacaktır."
-    },
-    2: {
-        title: "Çevre Temizliği - Çöp Kutusu",
-        status: "Çözüldü",
-        date: "01.07.2025",
-        location: "Park Sok. No: 5",
-        detail: "Park Sokak'taki park alanında bulunan çöp kutusu uzun süredir boşaltılmamış, çöp etrafa yayılmıştır. Bu durum hem kötü kokuya hem de çevre kirliliğine neden olmaktadır. Temizlik ekiplerinin müdahalesi gerekmektedir.",
-        response: "Şikayetiniz üzerine ekiplerimiz bölgeye yönlendirilmiş ve çöp kutusu boşaltılarak çevre temizliği yapılmıştır. Duyarlılığınız için teşekkür ederiz."
-    },
-    3: {
-        title: "Gürültü Kirliliği - İnşaat",
-        status: "İşlemde",
-        date: "10.07.2025",
-        location: "Barış Mah. İnşaat Alanı",
-        detail: "Gece geç saatlere kadar süren inşaat gürültüsü, mahalle sakinlerinin uyku düzenini olumsuz etkilemektedir. Gerekli denetimlerin yapılmasını rica ederiz.",
-        response: "Şikayetiniz ilgili zabıta birimine iletilmiştir. İnşaat sahasında denetim yapılarak gerekli uyarılar ve işlemler başlatılacaktır."
-    }
-};
-
-viewDetailsButtons.forEach(button => {
-    button.addEventListener('click', function() {
-        const complaintId = this.dataset.complaintId;
-        const complaint = dummyComplaints[complaintId];
-
-        if (complaint) {
-            document.getElementById('modalComplaintTitle').textContent = complaint.title;
-            document.getElementById('modalComplaintStatus').textContent = complaint.status;
-            const statusBadge = document.getElementById('modalComplaintStatus');
-            statusBadge.className = 'status-badge';
-            if (complaint.status === 'Beklemede') {
-                statusBadge.classList.add('status-pending');
-            } else if (complaint.status === 'İşlemde') {
-                statusBadge.classList.add('status-in-progress');
-            } else if (complaint.status === 'Çözüldü') {
-                statusBadge.classList.add('status-resolved');
-            }
-            document.getElementById('modalComplaintDate').textContent = complaint.date;
-            document.getElementById('modalComplaintLocation').textContent = complaint.location;
-            document.getElementById('modalComplaintDetail').textContent = complaint.detail;
-            document.getElementById('modalComplaintResponse').textContent = complaint.response || "Henüz bir cevap bulunmamaktadır.";
-            complaintModal.style.display = 'block';
-        }
-    });
-});
-*/
-
-
-// Particles.js konfigürasyonu (Yeni renk paleti ile güncellendi)
+// Particles.js konfigürasyonu
 particlesJS('particles-js', {
     "particles": {
         "number": {

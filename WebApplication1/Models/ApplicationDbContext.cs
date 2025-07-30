@@ -14,6 +14,10 @@ namespace SikayetAIWeb.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure relationships
+            modelBuilder.Entity<User>()
+                .Property(u => u.UserType)
+                .HasConversion<string>();
+
             modelBuilder.Entity<Complaint>()
                 .HasOne(c => c.User)
                 .WithMany(u => u.Complaints)

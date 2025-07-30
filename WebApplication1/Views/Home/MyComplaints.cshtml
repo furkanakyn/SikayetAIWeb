@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "Şikayetlerim";
+    Layout = "_Layout";
+}
+
+<div class="auth-page d-flex justify-content-center align-items-center">
+    <div class="auth-card card shadow-lg border-0 p-4">
+        <div class="card-header bg-primary text-white text-center">
+            <h3 class="mb-0"><i class="fas fa-list-alt me-2"></i> Şikayetlerim</h3>
+        </div>
+        <div class="card-body p-4">
+            <p class="lead text-center mb-4">Gönderdiğiniz şikayetleri buradan takip edebilirsiniz.</p>
+
+            <!-- Örnek Şikayet Listesi (Gerçek veritabanı verileriyle doldurulacak) -->
+            <div class="list-group">
+                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <h5 class="mb-1">Çöp Toplama Sorunu</h5>
+                        <small class="text-muted">Durum: <span class="badge bg-warning text-dark">İnceleniyor</span></small><br>
+                        <small class="text-muted">Tarih: 25.07.2025</small>
+                    </div>
+                    <button class="btn btn-sm btn-info text-white" onclick="showComplaintDetail('Çöp Toplama Sorunu', 'İnceleniyor', '25.07.2025', 'Merkez Mahallesi, Ana Cadde No:5', 'Sokağımızdaki çöp konteynerleri 3 gündür boşaltılmadı, kötü koku yayılıyor.', 'Belediye ekipleri talebinizi aldı, en kısa sürede müdahale edilecektir.')">Detay</button>
+                </div>
+                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <h5 class="mb-1">Asfalt Çukuru</h5>
+                        <small class="text-muted">Durum: <span class="badge bg-success">Çözüldü</span></small><br>
+                        <small class="text-muted">Tarih: 20.07.2025</small>
+                    </div>
+                    <button class="btn btn-sm btn-info text-white" onclick="showComplaintDetail('Asfalt Çukuru', 'Çözüldü', '20.07.2025', 'Gül Sokak, No:12', 'Sokağımızdaki büyük asfalt çukuru araçlara zarar veriyor.', 'Belediye yol yapım ekipleri çukuru onarmıştır. Teşekkür ederiz.')">Detay</button>
+                </div>
+                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <h5 class="mb-1">Park Aydınlatması Arızası</h5>
+                        <small class="text-muted">Durum: <span class="badge bg-danger">Reddedildi</span></small><br>
+                        <small class="text-muted">Tarih: 18.07.2025</small>
+                    </div>
+                    <button class="btn btn-sm btn-info text-white" onclick="showComplaintDetail('Park Aydınlatması Arızası', 'Reddedildi', '18.07.2025', 'Çınar Parkı', 'Çınar Parkı\'ndaki lambaların çoğu yanmıyor, akşamları tehlikeli oluyor.', 'Yapılan incelemelerde arızanın belediyemiz sorumluluğunda olmadığı tespit edilmiştir. İlgili elektrik dağıtım şirketine yönlendirmeniz gerekmektedir.')">Detay</button>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <a asp-action="ProfileView" asp-controller="Home" class="btn btn-link">Profile Geri Dön</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Şikayet Detay Modal (Mevcut olanı kullanıyoruz) -->
+<!-- Bu modal _Layout.cshtml'de zaten var, buraya tekrar eklemeyin. -->
+<!-- Ancak bu sayfada kullanmak için showComplaintDetail fonksiyonunu tanımlamamız gerekiyor. -->
+@section Scripts {
+    <script>
+        // Şikayet detay modalını göstermek için fonksiyon
+        function showComplaintDetail(title, status, date, location, detail, response) {
+            const complaintModal = document.getElementById('complaintModal');
+            document.getElementById('modalComplaintTitle').textContent = title;
+            document.getElementById('modalComplaintStatus').textContent = status;
+            document.getElementById('modalComplaintDate').textContent = date;
+            document.getElementById('modalComplaintLocation').textContent = location;
+            document.getElementById('modalComplaintDetail').textContent = detail;
+            document.getElementById('modalComplaintResponse').textContent = response;
+            complaintModal.style.display = 'block';
+        }
+    </script>
+}

@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Profil Ayarları";
+    Layout = "_Layout";
+}
+
+<div class="auth-page d-flex justify-content-center align-items-center">
+    <div class="auth-card card shadow-lg border-0 p-4">
+        <div class="card-header bg-primary text-white text-center">
+            <h3 class="mb-0"><i class="fas fa-cog me-2"></i> Profil Ayarları</h3>
+        </div>
+        <div class="card-body p-4">
+            <p class="lead text-center mb-4">Profil bilgilerinizi buradan güncelleyebilirsiniz.</p>
+
+            <!-- Örnek bir form, gerçek verilerinizle doldurun -->
+            <form>
+                <div class="mb-3">
+                    <label for="fullName" class="form-label">Tam Adınız</label>
+                    <input type="text" class="form-control" id="fullName" value="@Context.Session.GetString("FullName")" required>
+                </div>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Kullanıcı Adınız</label>
+                    <input type="text" class="form-control" id="username" value="@Context.Session.GetString("Username")" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-posta Adresiniz</label>
+                    <input type="email" class="form-control" id="email" placeholder="E-posta adresinizi girin" required>
+                </div>
+                <div class="mb-3">
+                    <label for="currentPassword" class="form-label">Mevcut Şifre</label>
+                    <input type="password" class="form-control" id="currentPassword" placeholder="Mevcut şifrenizi girin">
+                </div>
+                <div class="mb-3">
+                    <label for="newPassword" class="form-label">Yeni Şifre</label>
+                    <input type="password" class="form-control" id="newPassword" placeholder="Yeni şifrenizi girin">
+                </div>
+                <div class="mb-3">
+                    <label for="confirmNewPassword" class="form-label">Yeni Şifre Tekrar</label>
+                    <input type="password" class="form-control" id="confirmNewPassword" placeholder="Yeni şifrenizi tekrar girin">
+                </div>
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary-filled">Bilgileri Güncelle</button>
+                    <a asp-action="Profile" asp-controller="Home" class="btn btn-link">Profile Geri Dön</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

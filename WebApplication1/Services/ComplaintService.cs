@@ -41,7 +41,7 @@ namespace SikayetAIWeb.Services
         {
             var query = _context.Complaints.AsQueryable();
 
-            if (userType == UserType.Municipality && !string.IsNullOrEmpty(category))
+            if (userType == UserType.municipality && !string.IsNullOrEmpty(category))
             {
                 query = query.Where(c => c.Category == category);
             }

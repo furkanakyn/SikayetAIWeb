@@ -45,8 +45,8 @@ namespace SikayetAIWeb.Controllers
         {
             var userType = HttpContext.Session.GetString("UserType");
             if (string.IsNullOrEmpty(userType) ||
-                (userType != UserType.Municipality.ToString() &&
-                 userType != UserType.Admin.ToString()))
+                (userType != UserType.municipality.ToString() &&
+                 userType != UserType.admin.ToString()))
             {
                 return RedirectToAction("Login", "Auth");
             }
@@ -87,8 +87,8 @@ namespace SikayetAIWeb.Controllers
             // Check if user has access
             var userType = HttpContext.Session.GetString("UserType");
             if (complaint.UserId != userId.Value &&
-                userType != UserType.Municipality.ToString() &&
-                userType != UserType.Admin.ToString())
+                userType != UserType.municipality.ToString() &&
+                userType != UserType.admin.ToString())
             {
                 return Forbid();
             }

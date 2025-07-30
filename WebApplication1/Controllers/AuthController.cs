@@ -2,6 +2,8 @@
 using SikayetAIWeb.Models;
 using SikayetAIWeb.Services;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Http; // HttpContext.Session için
+using System; // Exception ve Enum için, Guid için
 
 namespace SikayetAIWeb.Controllers
 {
@@ -23,66 +25,86 @@ namespace SikayetAIWeb.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            return View();
+            return View(new LoginViewModel());
         }
 
         [HttpPost]
-        public IActionResult Login(string username, string password)
+        public IActionResult Login(LoginViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             try
             {
-                var user = _authService.Login(username, password);
+                var user = _authService.Login(model.Username, model.Password);
 
                 HttpContext.Session.SetInt32("UserId", user.Id);
                 HttpContext.Session.SetString("Username", user.Username);
                 HttpContext.Session.SetString("UserType", user.UserType.ToString());
                 HttpContext.Session.SetString("FullName", user.FullName);
+                HttpContext.Session.SetString("UserEmail", user.Email);
 
-                _logger.LogInformation($"User {username} logged in successfully");
+                _logger.LogInformation($"User {model.Username} logged in successfully");
 
-                return RedirectToAction("Index", "Home");
+                // Giriş başarılı olduktan sonra ana sayfaya yönlendirirken benzersiz bir sorgu dizesi ekle
+                // Bu, tarayıcının önbelleği atlamasını ve sayfanın yeni bir kopyasını çekmesini sağlar.
+                return RedirectToAction("Index", "Home", new { refresh = Guid.NewGuid().ToString() });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Login failed");
-                ViewBag.Error = "Kullanıcı adı veya şifre hatalı";
-                return View();
+                _logger.LogError(ex, "Login failed for user: {Username}", model.Username);
+                ViewBag.Error = "Kullanıcı adı veya şifre hatalı: " + ex.Message;
+                return View(model);
             }
         }
 
         [HttpGet]
         public IActionResult Register()
         {
-            return View(new User());
+            return View(new RegisterViewModel());
         }
 
         [HttpPost]
-        public IActionResult Register(User user, string password)
+        public IActionResult Register(RegisterViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             try
             {
-                if (!ModelState.IsValid)
+                var user = new User
                 {
-                    return View(user);
-                }
+                    Username = model.Username,
+                    Email = model.Email,
+                    FullName = model.FullName,
+                    UserType = (UserType)Enum.Parse(typeof(UserType), model.UserType)
+                };
 
-                var registeredUser = _authService.Register(user, password);
+                var registeredUser = _authService.Register(user, model.Password);
 
-                _logger.LogInformation($"New user registered: {user.Username}");
+                _logger.LogInformation($"New user registered: {model.Username}");
 
-                // Otomatik giriş yap
+                // Kayıt sonrası otomatik giriş yap
                 HttpContext.Session.SetInt32("UserId", registeredUser.Id);
                 HttpContext.Session.SetString("Username", registeredUser.Username);
                 HttpContext.Session.SetString("UserType", registeredUser.UserType.ToString());
                 HttpContext.Session.SetString("FullName", registeredUser.FullName);
+                HttpContext.Session.SetString("UserEmail", registeredUser.Email);
 
-                return RedirectToAction("Index", "Home");
+                TempData["SuccessMessage"] = "Kayıt işleminiz başarıyla tamamlandı! Lütfen giriş yapın.";
+
+                // Kayıt başarılı sonrası doğrudan Login sayfasına yönlendir
+                return RedirectToAction("Login", "Auth");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Registration failed");
+                _logger.LogError(ex, "Registration failed for user: {Username}", model.Username);
                 ViewBag.Error = ex.Message;
-                return View(user);
+                return View(model);
             }
         }
 
