@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SikayetAIWeb.Models;
 using SikayetAIWeb.Services;
+using System.Net.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Register services
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ComplaintService>();
+builder.Services.AddHttpClient<CategoryPredictionService>();
+builder.Services.AddScoped<CategoryPredictionService>();
+
 
 var app = builder.Build();
 
@@ -39,6 +43,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

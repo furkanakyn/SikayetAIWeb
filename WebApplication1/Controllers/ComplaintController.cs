@@ -1,16 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SikayetAIWeb.Models;
 using SikayetAIWeb.Services;
+using System.Threading.Tasks;
 
 namespace SikayetAIWeb.Controllers
 {
     public class ComplaintController : Controller
     {
         private readonly ComplaintService _complaintService;
+        private readonly CategoryPredictionService _categoryService;
 
-        public ComplaintController(ComplaintService complaintService)
+        public ComplaintController(ComplaintService complaintService, CategoryPredictionService categoryService)
         {
             _complaintService = complaintService;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
@@ -19,22 +22,36 @@ namespace SikayetAIWeb.Controllers
             return View();
         }
 
+        // Şikayet oluşturma işlemi (POST) - async ve CategoryPredictionService kullanılır
         [HttpPost]
-        public IActionResult Create(Complaint complaint)
+        public async Task<IActionResult> Create(Complaint model)  // Eğer ComplaintViewModel yoksa doğrudan Complaint kullanabilirsin
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null) return RedirectToAction("Login", "Auth");
+            if (ModelState.IsValid)
+            {
+                var userId = HttpContext.Session.GetInt32("UserId");
+                if (userId == null)
+                    return RedirectToAction("Login", "Auth");
 
-            complaint.UserId = userId.Value;
-            _complaintService.CreateComplaint(complaint);
-            return RedirectToAction("MyComplaints");
+                model.UserId = userId.Value;
+                model.CreatedAt = DateTime.Now;
+
+                // Yapay zeka servisi ile kategori tahmini
+                model.Category = await _categoryService.PredictCategoryAsync(model.Description);
+
+                _complaintService.CreateComplaint(model);
+
+                return RedirectToAction("MyComplaints");
+            }
+
+            return View(model);
         }
 
         [HttpGet]
         public IActionResult MyComplaints()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null) return RedirectToAction("Login", "Auth");
+            if (userId == null)
+                return RedirectToAction("Login", "Auth");
 
             var complaints = _complaintService.GetUserComplaints(userId.Value);
             return View(complaints);
@@ -53,7 +70,7 @@ namespace SikayetAIWeb.Controllers
 
             var complaints = _complaintService.GetDepartmentComplaints(
                 Enum.Parse<UserType>(userType),
-                null); 
+                null);
 
             return View(complaints);
         }
@@ -62,7 +79,8 @@ namespace SikayetAIWeb.Controllers
         public IActionResult AddResponse(int complaintId, string message)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null) return RedirectToAction("Login", "Auth");
+            if (userId == null)
+                return RedirectToAction("Login", "Auth");
 
             var response = new Response
             {
@@ -79,12 +97,13 @@ namespace SikayetAIWeb.Controllers
         public IActionResult Details(int id)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null) return RedirectToAction("Login", "Auth");
+            if (userId == null)
+                return RedirectToAction("Login", "Auth");
 
             var complaint = _complaintService.GetComplaintDetails(id);
-            if (complaint == null) return NotFound();
+            if (complaint == null)
+                return NotFound();
 
-            // Check if user has access
             var userType = HttpContext.Session.GetString("UserType");
             if (complaint.UserId != userId.Value &&
                 userType != UserType.municipality.ToString() &&

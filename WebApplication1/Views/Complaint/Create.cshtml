@@ -13,7 +13,7 @@
             <form asp-action="Create" method="post" id="complaintForm">
                 <div class="mb-3">
                     <label asp-for="Title" class="form-label">Başlık</label>
-                    <input asp-for="Title" class="form-control" placeholder="Şikayetinizin kısa başlığı" required>
+                    <input asp-for="Title" class="form-control" placeholder="Şikayetinizin kısa başlığı" required />
                     <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
 
@@ -23,24 +23,25 @@
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Tahmin Edilen Kategori</label>
-                        <input type="text" id="predictedCategoryDisplay" class="form-control" placeholder="Kategori otomatik tahmin edilecek..." readonly>
-                        <input type="hidden" asp-for="Category" id="predictedCategoryInput">
-                        <span asp-validation-for="Category" class="text-danger"></span>
-                        <small class="form-text text-muted mt-2">Şikayetiniz gönderilirken yapay zeka otomatik olarak kategori belirleyecektir.</small>
-                    </div>
+                <div class="mb-3">
+                    <button type="button" id="btnPredictCategory" class="btn btn-info mb-3">Kategori Tahmin Et</button>
 
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="Location" class="form-label">Konum (Opsiyonel)</label>
-                        <input asp-for="Location" class="form-control" placeholder="Örn: Cadde Adı, Mahalle">
-                        <span asp-validation-for="Location" class="text-danger"></span>
-                    </div>
+                    <label class="form-label">Tahmin Edilen Kategori</label>
+                    <input type="text" id="predictedCategoryDisplay" class="form-control mb-2" placeholder="Kategori otomatik tahmin edilecek..." readonly />
+                    <input type="hidden" asp-for="Category" id="predictedCategoryInput" />
+                    <span asp-validation-for="Category" class="text-danger"></span>
+
+                    <small class="form-text text-muted">Önce kategori tahmin edilmeli, sonra şikayet gönderilebilir.</small>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Location" class="form-label">Konum (Opsiyonel)</label>
+                    <input asp-for="Location" class="form-control" placeholder="Örn: Cadde Adı, Mahalle" />
+                    <span asp-validation-for="Location" class="text-danger"></span>
                 </div>
 
                 <div class="d-grid gap-2 mt-4">
-                    <button type="submit" class="btn btn-primary-filled btn-lg">
+                    <button type="submit" id="submitBtn" class="btn btn-primary-filled btn-lg" disabled>
                         <span id="submitSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
                         Şikayeti Gönder
                     </button>
@@ -52,5 +53,44 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.getElementById("btnPredictCategory").addEventListener("click", async function () {
+            const description = document.querySelector("[name='Description']").value.trim();
+            if (!description) {
+                alert("Lütfen önce açıklamayı doldurun.");
+                return;
+            }
+
+            this.disabled = true;
+            this.textContent = "Tahmin ediliyor...";
+
+            try {
+                const response = await fetch('/api/category/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: description })
+                });
+
+                if (!response.ok) throw new Error("Tahmin API'si hata döndürdü.");
+
+                const data = await response.json();
+                const category = data.predictedCategory || "Genel";
+
+                document.getElementById("predictedCategoryDisplay").value = category;
+                document.getElementById("predictedCategoryInput").value = category;
+
+                document.getElementById("submitBtn").disabled = false;
+
+            } catch (error) {
+                alert("Kategori tahmininde hata: " + error.message);
+            } finally {
+                this.disabled = false;
+                this.textContent = "Kategori Tahmin Et";
+            }
+        });
+    </script>
 }
