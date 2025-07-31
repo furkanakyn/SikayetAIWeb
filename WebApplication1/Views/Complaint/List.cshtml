@@ -17,25 +17,25 @@
 else
 {
     <div class="row">
-        @foreach (var complaint in Model)
-        {
-            <div class="col-md-6 mb-4">
-                <div class="card complaint-card h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span class="fw-bold">@complaint.Title</span>
-                        <span class="badge @GetStatusClass(complaint.Status) status-badge">
-                            @complaint.Status
+    @foreach (var complaint in Model)
+    {
+        <div class="col-md-6 mb-4">
+            <div class="card complaint-card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">@complaint.Title</span>
+                    <span class="badge @GetStatusClass(complaint.Status) status-badge">
+                        @complaint.Status
                         </span>
                     </div>
                     <div class="card-body">
                         <p class="card-text">@complaint.Description</p>
                         <div class="d-flex justify-content-between text-muted small">
                             <span>@complaint.Category</span>
-                            <span>@complaint.CreatedAt.ToString("dd MMM yyyy")</span>
+                            <span>@complaint.CreatedAt.HasValue ? complaint.CreatedAt.Value.ToString("dd MMM yyyy") : "Tarih yok"</span>
                         </div>
                     </div>
                     <div class="card-footer bg-transparent">
-                        <a asp-action="Details" asp-route-id="@complaint.Id" class="btn btn-sm btn-outline-primary">
+                        <a asp-action="Details" asp-route-id="@complaint.ComplaintId" class="btn btn-sm btn-outline-primary">
                             Detayları Görüntüle
                         </a>
                     </div>
@@ -46,9 +46,15 @@ else
 }
 
 @functions {
-    string GetStatusClass(ComplaintStatus status)
+    string GetStatusClass(string status) // Parametre tipini string yapın
     {
-        return status switch
+        // String'i enum'a dönüştürme işlemi ekleyin
+        if (!Enum.TryParse<ComplaintStatus>(status, ignoreCase: true, out var parsedStatus))
+        {
+            parsedStatus = ComplaintStatus.Pending; // Geçersiz değerler için varsayılan
+        }
+
+        return parsedStatus switch
         {
             ComplaintStatus.Pending => "bg-secondary",
             ComplaintStatus.InProgress => "bg-warning text-dark",
@@ -57,4 +63,5 @@ else
             _ => "bg-secondary"
         };
     }
+}
 }

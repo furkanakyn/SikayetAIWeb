@@ -1,23 +1,54 @@
-﻿namespace SikayetAIWeb.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SikayetAIWeb.Models
 {
     public enum ComplaintStatus { Pending, InProgress, Resolved, Rejected }
-
+    
+    [Table("complaints")]
     public class Complaint
     {
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Category { get; set; }
-        public string Location { get; set; }
-        public ComplaintStatus Status { get; set; } = ComplaintStatus.Pending;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        [Key]
+        [Column("complaint_id")]
+        public int ComplaintId { get; set; }
 
-        // Foreign keys
+        [Column("user_id")]
         public int UserId { get; set; }
+
+        [Required]
+        [Column("title")]
+        public string Title { get; set; }
+
+        [Required]
+        [Column("description")]
+        public string Description { get; set; }
+
+        [Required]
+        [Column("category")]
+        public string Category { get; set; }
+
+        [Column("location")]
+        public string? Location { get; set; }
+
+        [Column("status")]
+        public string Status { get; set; } = "pending";
+
+        [Column("created_at")]
+        public DateTime? CreatedAt { get; set; }
+
+        [Column("updated_at")]
+        public DateTime? UpdatedAt { get; set; }
 
         // Navigation properties
         public User User { get; set; }
         public List<Response> Responses { get; set; } = new List<Response>();
+
+        [NotMapped]
+        public ComplaintStatus StatusEnum
+        {
+            get => Enum.Parse<ComplaintStatus>(Status, true);
+            set => Status = value.ToString().ToLower();
+        }
+
     }
 }

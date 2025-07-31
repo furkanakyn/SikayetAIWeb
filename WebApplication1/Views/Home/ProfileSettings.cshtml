@@ -10,38 +10,57 @@
         </div>
         <div class="card-body p-4">
             <p class="lead text-center mb-4">Profil bilgilerinizi buradan güncelleyebilirsiniz.</p>
-
-            <!-- Örnek bir form, gerçek verilerinizle doldurun -->
-            <form>
+            <form asp-action="UpdateProfile" asp-controller="Home" method="post">
                 <div class="mb-3">
                     <label for="fullName" class="form-label">Tam Adınız</label>
-                    <input type="text" class="form-control" id="fullName" value="@Context.Session.GetString("FullName")" required>
+                    <input type="text" name="fullName" class=" form-control" id="fullName" value="@Context.Session.GetString("FullName")" required>
                 </div>
                 <div class="mb-3">
                     <label for="username" class="form-label">Kullanıcı Adınız</label>
-                    <input type="text" class="form-control" id="username" value="@Context.Session.GetString("Username")" required>
+                    <input type="text" name="userName" class=" form-control" id="username" value="@Context.Session.GetString("Username")" readonly>
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">E-posta Adresiniz</label>
-                    <input type="email" class="form-control" id="email" placeholder="E-posta adresinizi girin" required>
+                    <input type="email" name="email" class="form-control" id="email" value="@Context.Session.GetString("Email")" required>
                 </div>
                 <div class="mb-3">
                     <label for="currentPassword" class="form-label">Mevcut Şifre</label>
-                    <input type="password" class="form-control" id="currentPassword" placeholder="Mevcut şifrenizi girin">
+                    <input type="password" name="currentPassword" class="form-control" id="currentPassword" placeholder="Mevcut şifrenizi girin">
                 </div>
                 <div class="mb-3">
                     <label for="newPassword" class="form-label">Yeni Şifre</label>
-                    <input type="password" class="form-control" id="newPassword" placeholder="Yeni şifrenizi girin">
+                    <input type="password" name="newPassword" class="form-control" id="newPassword" placeholder="Yeni şifrenizi girin">
                 </div>
                 <div class="mb-3">
                     <label for="confirmNewPassword" class="form-label">Yeni Şifre Tekrar</label>
-                    <input type="password" class="form-control" id="confirmNewPassword" placeholder="Yeni şifrenizi tekrar girin">
+                    <input type="password" name="confirmNewPassword" class="form-control" id="confirmNewPassword" placeholder="Yeni şifrenizi tekrar girin">
                 </div>
                 <div class="d-grid gap-2 mt-4">
                     <button type="submit" class="btn btn-primary-filled">Bilgileri Güncelle</button>
                     <a asp-action="ProfileView" asp-controller="Home" class="btn btn-link">Profile Geri Dön</a>
                 </div>
             </form>
+
         </div>
     </div>
 </div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-3">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mt-3">@TempData["ErrorMessage"]</div>
+}
+<script>
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+        const currentPwd = document.getElementById('currentPassword').value;
+        const newPwd = document.getElementById('newPassword').value;
+
+        if(newPwd && currentPwd && newPwd === currentPwd){
+            e.preventDefault();
+            alert('Yeni şifre, mevcut şifre ile aynı olamaz.');
+        }
+    });
+</script>

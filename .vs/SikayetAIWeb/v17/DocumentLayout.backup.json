@@ -3,56 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\furka\\SikayetAIWeb\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\services\\complaintservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\services\\complaintservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\views\\home\\profilesettings.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\views\\home\\profilesettings.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\views\\home\\profile.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\views\\home\\profile.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\views\\home\\mycomplaints.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\views\\home\\mycomplaints.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\views\\home\\profileview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\views\\home\\profileview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\models\\complaint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\models\\complaint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\services\\complaintservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\services\\complaintservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\wwwroot\\js\\app.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\wwwroot\\js\\app.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|c:\\users\\furka\\sikayetaiweb\\webapplication1\\controllers\\complaintcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B1778F0E-4A76-46B6-BB70-B043B6EB4009}|WebApplication1\\WebApplication1.csproj|solutionrelative:webapplication1\\controllers\\complaintcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -62,175 +26,58 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Program.cs",
-              "RelativeDocumentMoniker": "WebApplication1\\Program.cs",
-              "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Program.cs",
-              "RelativeToolTip": "WebApplication1\\Program.cs",
-              "ViewState": "AgIAAB0AAAAAAAAAAAAswDAAAAAXAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-30T08:25:02.504Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "AuthController.cs",
-              "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Controllers\\AuthController.cs",
-              "RelativeDocumentMoniker": "WebApplication1\\Controllers\\AuthController.cs",
-              "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Controllers\\AuthController.cs",
-              "RelativeToolTip": "WebApplication1\\Controllers\\AuthController.cs",
-              "ViewState": "AgIAAHIAAAAAAAAAAADwv3oAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-30T08:07:33.891Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ProfileView.cshtml",
-              "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Views\\Home\\ProfileView.cshtml",
-              "RelativeDocumentMoniker": "WebApplication1\\Views\\Home\\ProfileView.cshtml",
-              "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Views\\Home\\ProfileView.cshtml",
-              "RelativeToolTip": "WebApplication1\\Views\\Home\\ProfileView.cshtml",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAABAAAABiAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-30T08:01:07.899Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ProfileSettings.cshtml",
-              "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Views\\Home\\ProfileSettings.cshtml",
-              "RelativeDocumentMoniker": "WebApplication1\\Views\\Home\\ProfileSettings.cshtml",
-              "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Views\\Home\\ProfileSettings.cshtml",
-              "RelativeToolTip": "WebApplication1\\Views\\Home\\ProfileSettings.cshtml",
-              "ViewState": "AgIAABgAAAAAAAAAAAAAACkAAAAuAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-30T07:50:52.9Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "MyComplaints.cshtml",
-              "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Views\\Home\\MyComplaints.cshtml",
-              "RelativeDocumentMoniker": "WebApplication1\\Views\\Home\\MyComplaints.cshtml",
-              "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Views\\Home\\MyComplaints.cshtml",
-              "RelativeToolTip": "WebApplication1\\Views\\Home\\MyComplaints.cshtml",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAAC0AAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-30T07:50:30.228Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Profile.cshtml",
-              "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Views\\Home\\Profile.cshtml",
-              "RelativeDocumentMoniker": "WebApplication1\\Views\\Home\\Profile.cshtml",
-              "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Views\\Home\\Profile.cshtml",
-              "RelativeToolTip": "WebApplication1\\Views\\Home\\Profile.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-30T07:49:04.561Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "HomeController.cs",
-              "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Controllers\\HomeController.cs",
-              "RelativeDocumentMoniker": "WebApplication1\\Controllers\\HomeController.cs",
-              "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Controllers\\HomeController.cs",
-              "RelativeToolTip": "WebApplication1\\Controllers\\HomeController.cs",
-              "ViewState": "AgIAADEAAAAAAAAAAAAiwD8AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-30T07:47:52.219Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "WebApplication1\\Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "WebApplication1\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAAEgAAAAAAAAAAAAqwF8AAAAHAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-30T07:47:31.06Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Views\\Home\\Index.cshtml",
-              "RelativeDocumentMoniker": "WebApplication1\\Views\\Home\\Index.cshtml",
-              "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Views\\Home\\Index.cshtml",
-              "RelativeToolTip": "WebApplication1\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAGkAAAAAAAAAAAAAAAIAAAAYAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-30T06:50:57.789Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "site.css",
-              "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\wwwroot\\css\\site.css",
-              "RelativeDocumentMoniker": "WebApplication1\\wwwroot\\css\\site.css",
-              "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\wwwroot\\css\\site.css",
-              "RelativeToolTip": "WebApplication1\\wwwroot\\css\\site.css",
-              "ViewState": "AgIAABQFAAAAAAAAAAAAACoFAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-07-30T07:39:20.467Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "app.js",
-              "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\wwwroot\\js\\app.js",
-              "RelativeDocumentMoniker": "WebApplication1\\wwwroot\\js\\app.js",
-              "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\wwwroot\\js\\app.js",
-              "RelativeToolTip": "WebApplication1\\wwwroot\\js\\app.js",
-              "ViewState": "AgIAAMkAAAAAAAAAAAAswN8AAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2025-07-30T07:37:49.021Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "User.cs",
-              "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Models\\User.cs",
-              "RelativeDocumentMoniker": "WebApplication1\\Models\\User.cs",
-              "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Models\\User.cs",
-              "RelativeToolTip": "WebApplication1\\Models\\User.cs",
-              "ViewState": "AgIAAB8AAAAAAAAAAAAzwAQAAAAzAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-30T06:14:31.867Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
               "Title": "ComplaintService.cs",
               "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Services\\ComplaintService.cs",
               "RelativeDocumentMoniker": "WebApplication1\\Services\\ComplaintService.cs",
               "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Services\\ComplaintService.cs",
               "RelativeToolTip": "WebApplication1\\Services\\ComplaintService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACsAAAAmAAAAAAAAAA==",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAIwEMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-30T06:44:08.163Z",
+              "WhenOpened": "2025-07-31T11:23:10.318Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Program.cs",
+              "RelativeDocumentMoniker": "WebApplication1\\Program.cs",
+              "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Program.cs",
+              "RelativeToolTip": "WebApplication1\\Program.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAcwBsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-31T11:16:46.636Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ComplaintController.cs",
+              "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Controllers\\ComplaintController.cs",
+              "RelativeDocumentMoniker": "WebApplication1\\Controllers\\ComplaintController.cs",
+              "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Controllers\\ComplaintController.cs",
+              "RelativeToolTip": "WebApplication1\\Controllers\\ComplaintController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAoAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-31T11:12:21.29Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Complaint.cs",
+              "DocumentMoniker": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Models\\Complaint.cs",
+              "RelativeDocumentMoniker": "WebApplication1\\Models\\Complaint.cs",
+              "ToolTip": "C:\\Users\\furka\\SikayetAIWeb\\WebApplication1\\Models\\Complaint.cs",
+              "RelativeToolTip": "WebApplication1\\Models\\Complaint.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAIAwwCEAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-31T10:16:55.708Z",
               "EditorCaption": ""
             }
           ]

@@ -1,6 +1,8 @@
-﻿@{
+﻿@model Complaint
+
+@{
     ViewData["Title"] = "Ana Sayfa";
-    Layout = "_Layout"; 
+    Layout = "_Layout"; // Bu satır, sayfanın _Layout.cshtml'i kullanmasını sağlar.
 }
 
 <!-- ANA İÇERİK BÖLÜMÜ - SADECE BURADAKİ İÇERİK Index.cshtml'de olmalı -->
@@ -13,8 +15,15 @@
         <h1>Şikayetleriniz Çözüme Dönüşsün. Kolayca. Hızla.</h1>
         <p>Yapay zeka gücüyle şikayetlerinizi doğru adrese ulaştırın, çözümleri takip edin.</p>
         <div class="hero-buttons">
-            <a href="#" class="btn btn-primary-filled" id="heroSubmitBtn">Şikayetini Şimdi Gönder</a>
-            <a href="#nasil-calisir" class="btn btn-secondary-outline">Nasıl Çalışır?</a>
+            @if (Context.Session.GetInt32("UserId") != null)
+            {
+                <a asp-action="Create" asp-controller="Complaint" class="btn btn-primary-filled" id="heroSubmitBtn">Şikayetini Şimdi Gönder</a>
+            }
+            else
+            {
+                <a asp-action="Login" asp-controller="Auth" class="btn btn-primary-filled" id="heroSubmitBtn">Şikayetini Şimdi Gönder</a>
+            }
+            <a asp-action="Index" asp-controller="Home" asp-fragment="nasil-calisir" class="btn btn-secondary-outline">Nasıl Çalışır?</a>
         </div>
     </div>
 </div>

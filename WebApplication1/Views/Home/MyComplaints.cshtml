@@ -1,66 +1,114 @@
-﻿@{
+﻿@model IEnumerable<Complaint>
+
+@{
     ViewData["Title"] = "Şikayetlerim";
-    Layout = "_Layout";
 }
 
-<div class="auth-page d-flex justify-content-center align-items-center">
-    <div class="auth-card card shadow-lg border-0 p-4">
-        <div class="card-header bg-primary text-white text-center">
-            <h3 class="mb-0"><i class="fas fa-list-alt me-2"></i> Şikayetlerim</h3>
-        </div>
-        <div class="card-body p-4">
-            <p class="lead text-center mb-4">Gönderdiğiniz şikayetleri buradan takip edebilirsiniz.</p>
+<div class="container py-5 complaint-list-page">
+    <h2 class="text-center mb-4 section-heading">
+        <i class="fas fa-list-alt me-2"></i> @ViewData["Title"]
+    </h2>
+    <hr class="section-divider mb-5">
 
-            <!-- Örnek Şikayet Listesi (Gerçek veritabanı verileriyle doldurulacak) -->
-            <div class="list-group">
-                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2">
-                    <div>
-                        <h5 class="mb-1">Çöp Toplama Sorunu</h5>
-                        <small class="text-muted">Durum: <span class="badge bg-warning text-dark">İnceleniyor</span></small><br>
-                        <small class="text-muted">Tarih: 25.07.2025</small>
-                    </div>
-                    <button class="btn btn-sm btn-info text-white" onclick="showComplaintDetail('Çöp Toplama Sorunu', 'İnceleniyor', '25.07.2025', 'Merkez Mahallesi, Ana Cadde No:5', 'Sokağımızdaki çöp konteynerleri 3 gündür boşaltılmadı, kötü koku yayılıyor.', 'Belediye ekipleri talebinizi aldı, en kısa sürede müdahale edilecektir.')">Detay</button>
-                </div>
-                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2">
-                    <div>
-                        <h5 class="mb-1">Asfalt Çukuru</h5>
-                        <small class="text-muted">Durum: <span class="badge bg-success">Çözüldü</span></small><br>
-                        <small class="text-muted">Tarih: 20.07.2025</small>
-                    </div>
-                    <button class="btn btn-sm btn-info text-white" onclick="showComplaintDetail('Asfalt Çukuru', 'Çözüldü', '20.07.2025', 'Gül Sokak, No:12', 'Sokağımızdaki büyük asfalt çukuru araçlara zarar veriyor.', 'Belediye yol yapım ekipleri çukuru onarmıştır. Teşekkür ederiz.')">Detay</button>
-                </div>
-                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2">
-                    <div>
-                        <h5 class="mb-1">Park Aydınlatması Arızası</h5>
-                        <small class="text-muted">Durum: <span class="badge bg-danger">Reddedildi</span></small><br>
-                        <small class="text-muted">Tarih: 18.07.2025</small>
-                    </div>
-                    <button class="btn btn-sm btn-info text-white" onclick="showComplaintDetail('Park Aydınlatması Arızası', 'Reddedildi', '18.07.2025', 'Çınar Parkı', 'Çınar Parkı\'ndaki lambaların çoğu yanmıyor, akşamları tehlikeli oluyor.', 'Yapılan incelemelerde arızanın belediyemiz sorumluluğunda olmadığı tespit edilmiştir. İlgili elektrik dağıtım şirketine yönlendirmeniz gerekmektedir.')">Detay</button>
-                </div>
-            </div>
-
-            <div class="d-grid gap-2 mt-4">
-                <a asp-action="ProfileView" asp-controller="Home" class="btn btn-link">Profile Geri Dön</a>
-            </div>
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center shadow-sm p-4 rounded-lg animate__animated animate__fadeInUp">
+            <i class="fas fa-info-circle me-2"></i> Henüz hiç şikayet oluşturmadınız.
+            <br>
+            <a asp-controller="Complaint" asp-action="Create" class="alert-link mt-2 d-inline-block fw-bold">Yeni şikayet oluşturmak için tıklayın</a>
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="row g-4 justify-content-center">
+            @foreach (var complaint in Model)
+            {
+                <div class="col-lg-6 col-md-8 col-sm-10 mb-4 animate__animated animate__fadeInUp">
+                    <div class="card complaint-card h-100 shadow-hover">
+                        <div class="card-header d-flex justify-content-between align-items-center bg-transparent border-bottom-0 pb-0">
+                            <h5 class="fw-bold text-primary mb-0">@complaint.Title</h5>
+                            <span class="badge @GetStatusClass(complaint.Status) status-badge">
+                                @complaint.Status
+                            </span>
+                        </div>
+                        <div class="card-body pt-2">
+                            <p class="card-text text-medium mb-3">@complaint.Description</p>
+                            <div class="d-flex justify-content-between text-muted small">
+                                <span class="text-dark fw-semibold"><i class="fas fa-tag me-1"></i> @complaint.Category</span>
+                                <span class="text-medium"><i class="fas fa-calendar-alt me-1"></i> @complaint.CreatedAt.HasValue ? complaint.CreatedAt.Value.ToString("dd MMM yyyy") : "Tarih yok"</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0 pt-0 text-end">
+                            <a asp-action="Details" asp-route-id="@complaint.ComplaintId" class="btn btn-sm btn-outline-primary-custom">
+                                <i class="fas fa-info-circle me-1"></i> Detayları Görüntüle
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>
 
-<!-- Şikayet Detay Modal (Mevcut olanı kullanıyoruz) -->
-<!-- Bu modal _Layout.cshtml'de zaten var, buraya tekrar eklemeyin. -->
-<!-- Ancak bu sayfada kullanmak için showComplaintDetail fonksiyonunu tanımlamamız gerekiyor. -->
+@functions {
+    string GetStatusClass(ComplaintStatus status)
+    {
+        return status switch
+        {
+            ComplaintStatus.Pending => "bg-secondary text-dark", // Beklemede: Açık gri, koyu metin
+            ComplaintStatus.InProgress => "bg-warning text-dark", // Devam Ediyor: Sarı, koyu metin
+            ComplaintStatus.Resolved => "bg-success text-light", // Çözüldü: Yeşil, beyaz metin
+            ComplaintStatus.Rejected => "bg-danger text-light", // Reddedildi: Kırmızı, beyaz metin
+            _ => "bg-secondary text-dark"
+        };
+    }
+
+    @functions {
+    public enum ComplaintStatus
+    {
+        Pending,
+        InProgress,
+        Resolved,
+        Rejected
+    }
+
+    string GetStatusClass(string status)
+    {
+        // Veritabanındaki string değeri enum’a çeviriyoruz
+        if (!Enum.TryParse<ComplaintStatus>(ToPascalCase(status), out var parsedStatus))
+        {
+            parsedStatus = ComplaintStatus.Pending; 
+        }
+
+        return parsedStatus switch
+        {
+            ComplaintStatus.Pending => "bg-secondary text-dark",
+            ComplaintStatus.InProgress => "bg-warning text-dark",
+            ComplaintStatus.Resolved => "bg-success text-light",
+            ComplaintStatus.Rejected => "bg-danger text-light",
+            _ => "bg-secondary text-dark"
+        };
+    }
+
+    string ToPascalCase(string input)
+    {
+        if (string.IsNullOrEmpty(input)) return input;
+        var parts = input.Split(new[] { '_', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        return string.Concat(parts.Select(p => char.ToUpper(p[0]) + p.Substring(1).ToLower()));
+    }
+}
+
+}
+
 @section Scripts {
     <script>
-        // Şikayet detay modalını göstermek için fonksiyon
-        function showComplaintDetail(title, status, date, location, detail, response) {
-            const complaintModal = document.getElementById('complaintModal');
-            document.getElementById('modalComplaintTitle').textContent = title;
-            document.getElementById('modalComplaintStatus').textContent = status;
-            document.getElementById('modalComplaintDate').textContent = date;
-            document.getElementById('modalComplaintLocation').textContent = location;
-            document.getElementById('modalComplaintDetail').textContent = detail;
-            document.getElementById('modalComplaintResponse').textContent = response;
-            complaintModal.style.display = 'block';
-        }
+        // Opsiyonel: Şikayet kartlarına hafif bir animasyon eklemek için
+        document.addEventListener('DOMContentLoaded', function() {
+            const complaintCards = document.querySelectorAll('.complaint-card');
+            complaintCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.05}s`; // Her karta küçük bir gecikme ekle
+                card.classList.add('animate__fadeInUp'); // animate.css sınıfı
+            });
+        });
     </script>
 }

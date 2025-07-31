@@ -19,7 +19,7 @@ namespace SikayetAIWeb.Services
         return _context.Complaints
             .Include(c => c.Responses)
             .Include(c => c.User)
-            .FirstOrDefault(c => c.Id == complaintId);
+            .FirstOrDefault(c => c.ComplaintId == complaintId);
         }
 
         public Complaint CreateComplaint(Complaint complaint)
@@ -55,12 +55,13 @@ namespace SikayetAIWeb.Services
 
             // Update complaint status
             var complaint = _context.Complaints.Find(response.ComplaintId);
-            if (complaint != null && complaint.Status == ComplaintStatus.Pending)
+            if (complaint != null &&
+                Enum.TryParse<ComplaintStatus>(complaint.Status, out var statusEnum) &&
+                statusEnum == ComplaintStatus.Pending)
             {
-                complaint.Status = ComplaintStatus.InProgress;
+                complaint.Status = ComplaintStatus.InProgress.ToString();
                 complaint.UpdatedAt = DateTime.UtcNow;
             }
-
             _context.SaveChanges();
             return response;
         }

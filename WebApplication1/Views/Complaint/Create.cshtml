@@ -4,45 +4,53 @@
     ViewData["Title"] = "Yeni Şikayet Oluştur";
 }
 
-<div class="card">
-    <div class="card-header bg-primary text-white">
-        <h3>@ViewData["Title"]</h3>
-    </div>
-    <div class="card-body">
-        <form asp-action="Create">
-            <div class="mb-3">
-                <label asp-for="Title" class="form-label">Başlık</label>
-                <input asp-for="Title" class="form-control" required>
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Description" class="form-label">Açıklama</label>
-                <textarea asp-for="Description" class="form-control" rows="4" required></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label asp-for="Category" class="form-label">Kategori</label>
-                    <select asp-for="Category" class="form-select" required>
-                        <option value="">Seçiniz</option>
-                        <option value="Altyapı">Altyapı</option>
-                        <option value="Çevre">Çevre</option>
-                        <option value="Ulaşım">Ulaşım</option>
-                        <option value="Gürültü">Gürültü</option>
-                        <option value="Diğer">Diğer</option>
-                    </select>
+<div class="container py-5 complaint-form-section">
+    <div class="card complaint-card-form shadow-lg border-0">
+        <div class="card-header text-center">
+            <h3><i class="fas fa-plus-circle me-2"></i> @ViewData["Title"]</h3>
+        </div>
+        <div class="card-body p-4">
+            <form asp-action="Create" method="post" id="complaintForm">
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label">Başlık</label>
+                    <input asp-for="Title" class="form-control" placeholder="Şikayetinizin kısa başlığı" required>
+                    <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <label asp-for="Location" class="form-label">Konum</label>
-                    <input asp-for="Location" class="form-control">
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Açıklama</label>
+                    <textarea asp-for="Description" class="form-control" rows="5" placeholder="Şikayetinizin detaylı açıklaması" required></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
-            </div>
 
-            <button type="submit" class="btn btn-primary">Gönder</button>
-            <a asp-action="MyComplaints" class="btn btn-secondary">İptal</a>
-        </form>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Tahmin Edilen Kategori</label>
+                        <input type="text" id="predictedCategoryDisplay" class="form-control" placeholder="Kategori otomatik tahmin edilecek..." readonly>
+                        <input type="hidden" asp-for="Category" id="predictedCategoryInput">
+                        <span asp-validation-for="Category" class="text-danger"></span>
+                        <small class="form-text text-muted mt-2">Şikayetiniz gönderilirken yapay zeka otomatik olarak kategori belirleyecektir.</small>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Location" class="form-label">Konum (Opsiyonel)</label>
+                        <input asp-for="Location" class="form-control" placeholder="Örn: Cadde Adı, Mahalle">
+                        <span asp-validation-for="Location" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary-filled btn-lg">
+                        <span id="submitSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+                        Şikayeti Gönder
+                    </button>
+                    <a asp-action="MyComplaints" class="btn btn-secondary-outline btn-lg">İptal ve Şikayetlerime Dön</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

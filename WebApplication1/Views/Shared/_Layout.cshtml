@@ -34,7 +34,17 @@
                 <li><a asp-action="Index" asp-controller="Home" asp-fragment="hakkimizda">Hakkımızda</a></li>
                 <li><a asp-action="Index" asp-controller="Home" asp-fragment="nasil-calisir">Nasıl Çalışır?</a></li>
                 <li><a asp-action="Index" asp-controller="Home" asp-fragment="ozellikler">Özellikler</a></li>
-                <li><a asp-action="Index" asp-controller="Home" asp-fragment="submitComplaintNav" class="btn-text-link">Şikayet Gönder</a></li>
+
+                @if (Context.Session.GetInt32("UserId") != null)
+                {
+                    <!-- Kullanıcı Giriş Yapmışsa: Şikayet Gönder sayfasına git -->
+                    <li><a asp-action="Create" asp-controller="Complaint" class="btn-text-link">Şikayet Gönder</a></li>
+                }
+                else
+                {
+                    <!-- Kullanıcı Giriş Yapmamışsa: Giriş Yap sayfasına yönlendir -->
+                    <li><a asp-action="Login" asp-controller="Auth" class="btn-text-link">Şikayet Gönder</a></li>
+                }
 
                 @if (Context.Session.GetInt32("UserId") != null)
                 {

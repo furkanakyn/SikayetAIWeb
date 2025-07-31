@@ -44,7 +44,7 @@ namespace SikayetAIWeb.Controllers
                 HttpContext.Session.SetString("Username", user.Username);
                 HttpContext.Session.SetString("UserType", user.UserType.ToString());
                 HttpContext.Session.SetString("FullName", user.FullName);
-                HttpContext.Session.SetString("UserEmail", user.Email);
+                HttpContext.Session.SetString("Email", user.Email);
 
                 _logger.LogInformation($"User {model.Username} logged in successfully");
 

@@ -53,7 +53,7 @@ namespace SikayetAIWeb.Controllers
 
             var complaints = _complaintService.GetDepartmentComplaints(
                 Enum.Parse<UserType>(userType),
-                null); // Add category filter if needed
+                null); 
 
             return View(complaints);
         }
