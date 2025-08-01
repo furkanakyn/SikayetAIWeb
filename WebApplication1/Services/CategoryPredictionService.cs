@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Net.Http;
-using System.Text.Json;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 
 namespace SikayetAIWeb.Services
@@ -11,84 +12,68 @@ namespace SikayetAIWeb.Services
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<CategoryPredictionService> _logger;
-        private readonly IConfiguration _configuration;
         private const string FallbackCategory = "Genel";
 
         public CategoryPredictionService(
             HttpClient httpClient,
-            ILogger<CategoryPredictionService> logger,
-            IConfiguration configuration)
+            ILogger<CategoryPredictionService> logger)
         {
             _httpClient = httpClient;
             _logger = logger;
-            _configuration = configuration;
 
-            // Flask API adresini yapılandırmadan al
-            var baseUrl = _configuration["FlaskApi:BaseUrl"] ?? "http://localhost:5000/";
-            _httpClient.BaseAddress = new Uri(baseUrl);
-
-            // Zaman aşımı süresi
-            var timeoutSeconds = _configuration.GetValue<double>("FlaskApi:TimeoutSeconds", 15);
-            _httpClient.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+            // Flask API endpoint
+            _httpClient.BaseAddress = new Uri("http://127.0.0.1:5000/");
+            _httpClient.Timeout = TimeSpan.FromSeconds(10);
         }
 
-        public async Task<string> PredictCategoryAsync(string complaintText)
+        // ✅ 2 kategori döndürür
+        public async Task<List<string>> PredictCategoriesAsync(string complaintText)
         {
-            Console.WriteLine("Tahmin için Flask API'ye gönderiliyor: " + complaintText);
-
             if (string.IsNullOrWhiteSpace(complaintText))
             {
-                _logger.LogWarning("Boş şikayet metni için kategori tahmini yapılamıyor.");
-                return FallbackCategory;
+                _logger.LogWarning("Boş şikayet metni için tahmin yapılamıyor");
+                return new List<string> { FallbackCategory };
             }
 
             try
             {
-                // Uzun metinleri kısaltma
-                var truncatedText = complaintText.Length > 1000
-                    ? complaintText.Substring(0, 1000)
-                    : complaintText;
+                var requestData = new { text = complaintText };
+                var response = await _httpClient.PostAsJsonAsync("predict", requestData);
 
-                var requestData = new { text = truncatedText };
-                var endpoint = "predict"; // Flask endpoint
-
-                var response = await _httpClient.PostAsJsonAsync(endpoint, requestData);
-
-                if (response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
                 {
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
-
-                    var result = await response.Content.ReadFromJsonAsync<PredictionResult>(options);
-
-                    // Flask API'nin dönüş formatına göre ayarlayın
-                    return result?.predicted_category ?? FallbackCategory;
+                    _logger.LogError($"API hatası: {response.StatusCode}");
+                    return new List<string> { FallbackCategory };
                 }
 
-                var errorContent = await response.Content.ReadAsStringAsync();
-                _logger.LogError($"API hatası ({response.StatusCode}): {errorContent}");
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, "API bağlantı hatası");
-            }
-            catch (TaskCanceledException)
-            {
-                _logger.LogError("API zaman aşımı");
+                var result = await response.Content.ReadFromJsonAsync<PredictionResult>();
+
+                if (result?.Labels != null && result.Labels.Count > 0)
+                {
+                    // İlk 2 tahmini döndür
+                    return result.Labels.Take(2).ToList();
+                }
+
+                _logger.LogWarning("API'den geçerli bir kategori gelmedi.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Beklenmeyen tahmin hatası");
+                _logger.LogError(ex, "Tahmin hatası");
             }
 
-            return FallbackCategory;
+            return new List<string> { FallbackCategory };
         }
-    }
 
-    public class PredictionResult
-    {
-        public string predicted_category { get; set; } = string.Empty;
+        
+        public async Task<string> PredictCategoryAsync(string complaintText)
+        {
+            var categories = await PredictCategoriesAsync(complaintText);
+            return categories.FirstOrDefault() ?? FallbackCategory;
+        }
+
+        private class PredictionResult
+        {
+            public List<string> Labels { get; set; }
+        }
     }
 }

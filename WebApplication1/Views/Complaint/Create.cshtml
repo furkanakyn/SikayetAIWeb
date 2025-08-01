@@ -26,12 +26,20 @@
                 <div class="mb-3">
                     <button type="button" id="btnPredictCategory" class="btn btn-info mb-3">Kategori Tahmin Et</button>
 
-                    <label class="form-label">Tahmin Edilen Kategori</label>
-                    <input type="text" id="predictedCategoryDisplay" class="form-control mb-2" placeholder="Kategori otomatik tahmin edilecek..." readonly />
-                    <input type="hidden" asp-for="Category" id="predictedCategoryInput" />
-                    <span asp-validation-for="Category" class="text-danger"></span>
+                    <label class="form-label">Tahmin Edilen Kategoriler</label>
 
-                    <small class="form-text text-muted">Önce kategori tahmin edilmeli, sonra şikayet gönderilebilir.</small>
+                    <!-- 1. kategori -->
+                    <input type="text" id="predictedCategoryDisplay1" class="form-control mb-2" placeholder="1. kategori tahmini..." readonly />
+                    <input type="hidden" asp-for="Category" id="predictedCategoryInput1" />
+
+                    <!-- 2. kategori -->
+                    <input type="text" id="predictedCategoryDisplay2" class="form-control mb-2" placeholder="2. kategori tahmini..." readonly />
+                    <input type="hidden" asp-for="Category2" id="predictedCategoryInput2" />
+
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                    <span asp-validation-for="Category2" class="text-danger"></span>
+
+                    <small class="form-text text-muted">Yapay zeka iki kategori tahmini yapacak, ikisi de kaydedilecektir.</small>
                 </div>
 
                 <div class="mb-3">
@@ -78,11 +86,17 @@
                 if (!response.ok) throw new Error("Tahmin API'si hata döndürdü.");
 
                 const data = await response.json();
-                const category = data.predictedCategory || "Genel";
+                const categories = data.predictedCategories || ["Genel"];
 
-                document.getElementById("predictedCategoryDisplay").value = category;
-                document.getElementById("predictedCategoryInput").value = category;
+                // 1. kategori
+                document.getElementById("predictedCategoryDisplay1").value = categories[0] || "Genel";
+                document.getElementById("predictedCategoryInput1").value = categories[0] || "Genel";
 
+                // 2. kategori
+                document.getElementById("predictedCategoryDisplay2").value = categories[1] || "";
+                document.getElementById("predictedCategoryInput2").value = categories[1] || "";
+
+                // Gönder butonunu aç
                 document.getElementById("submitBtn").disabled = false;
 
             } catch (error) {

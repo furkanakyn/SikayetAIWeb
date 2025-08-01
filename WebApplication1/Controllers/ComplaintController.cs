@@ -22,27 +22,31 @@ namespace SikayetAIWeb.Controllers
             return View();
         }
 
-        // Şikayet oluşturma işlemi (POST) - async ve CategoryPredictionService kullanılır
+        // Create Post
         [HttpPost]
-        public async Task<IActionResult> Create(Complaint model)  // Eğer ComplaintViewModel yoksa doğrudan Complaint kullanabilirsin
+        public async Task<IActionResult> Create(Complaint model)
         {
             if (ModelState.IsValid)
             {
                 var userId = HttpContext.Session.GetInt32("UserId");
-                if (userId == null)
-                    return RedirectToAction("Login", "Auth");
+                if (userId == null) return RedirectToAction("Login", "Auth");
 
-                model.UserId = userId.Value;
-                model.CreatedAt = DateTime.Now;
+                var complaint = new Complaint
+                {
+                    Title = model.Title,
+                    Description = model.Description,
+                    CreatedAt = DateTime.Now,
+                    UserId = userId.Value
+                };
 
-                // Yapay zeka servisi ile kategori tahmini
-                model.Category = await _categoryService.PredictCategoryAsync(model.Description);
+                // Kategori tahmini yapıyoruz
+                var categories = await _categoryService.PredictCategoriesAsync(model.Description);
+                complaint.Category = categories.FirstOrDefault() ?? "Genel";
 
-                _complaintService.CreateComplaint(model);
+                _complaintService.CreateComplaint(complaint);
 
                 return RedirectToAction("MyComplaints");
             }
-
             return View(model);
         }
 
@@ -50,8 +54,7 @@ namespace SikayetAIWeb.Controllers
         public IActionResult MyComplaints()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("Login", "Auth");
+            if (userId == null) return RedirectToAction("Login", "Auth");
 
             var complaints = _complaintService.GetUserComplaints(userId.Value);
             return View(complaints);
@@ -79,8 +82,7 @@ namespace SikayetAIWeb.Controllers
         public IActionResult AddResponse(int complaintId, string message)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("Login", "Auth");
+            if (userId == null) return RedirectToAction("Login", "Auth");
 
             var response = new Response
             {
@@ -97,12 +99,10 @@ namespace SikayetAIWeb.Controllers
         public IActionResult Details(int id)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("Login", "Auth");
+            if (userId == null) return RedirectToAction("Login", "Auth");
 
             var complaint = _complaintService.GetComplaintDetails(id);
-            if (complaint == null)
-                return NotFound();
+            if (complaint == null) return NotFound();
 
             var userType = HttpContext.Session.GetString("UserType");
             if (complaint.UserId != userId.Value &&

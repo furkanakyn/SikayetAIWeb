@@ -26,6 +26,7 @@ namespace SikayetAIWeb.Models
         [Required]
         [Column("category")]
         public string Category { get; set; }
+        public string? Category2 { get; set; }
 
         [Column("location")]
         public string? Location { get; set; }
