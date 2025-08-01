@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SikayetAIWeb.Models;
-using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SikayetAIWeb.Services
 {
@@ -12,21 +14,55 @@ namespace SikayetAIWeb.Services
         {
             _context = context;
         }
-        
 
         public Complaint? GetComplaintDetails(int complaintId)
         {
-        return _context.Complaints
-            .Include(c => c.Responses)
-            .Include(c => c.User)
-            .FirstOrDefault(c => c.ComplaintId == complaintId);
+            return _context.Complaints
+                .Include(c => c.Responses)
+                .Include(c => c.User)
+                .FirstOrDefault(c => c.ComplaintId == complaintId);
         }
 
         public Complaint CreateComplaint(Complaint complaint)
         {
-            _context.Complaints.Add(complaint);
-            _context.SaveChanges();
-            return complaint;
+            try
+            {
+                // Navigation property'leri null yap
+                complaint.User = null;
+                complaint.Responses = null;
+
+                // Kategori2 boşsa null olarak ayarla
+                if (string.IsNullOrWhiteSpace(complaint.Category2))
+                {
+                    complaint.Category2 = null;
+                }
+
+                // Zaman damgalarını kontrol et
+                if (complaint.CreatedAt == default)
+                {
+                    complaint.CreatedAt = DateTime.UtcNow;
+                }
+
+                if (complaint.UpdatedAt == default)
+                {
+                    complaint.UpdatedAt = DateTime.UtcNow;
+                }
+
+                // Varsayılan durumu ayarla
+                if (string.IsNullOrWhiteSpace(complaint.Status))
+                {
+                    complaint.Status = "pending";
+                }
+
+                // Entity Framework'e ekle
+                _context.Complaints.Add(complaint);
+                _context.SaveChanges();
+                return complaint;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Şikayet oluşturulamadı: " + ex.Message, ex);
+            }
         }
 
         public IEnumerable<Complaint> GetUserComplaints(int userId)
@@ -51,19 +87,25 @@ namespace SikayetAIWeb.Services
 
         public Response AddResponse(Response response)
         {
-            _context.Responses.Add(response);
-
-            // Update complaint status
-            var complaint = _context.Complaints.Find(response.ComplaintId);
-            if (complaint != null &&
-                Enum.TryParse<ComplaintStatus>(complaint.Status, out var statusEnum) &&
-                statusEnum == ComplaintStatus.Pending)
+            try
             {
-                complaint.Status = ComplaintStatus.InProgress.ToString();
-                complaint.UpdatedAt = DateTime.UtcNow;
+                _context.Responses.Add(response);
+
+                // Şikayet durumunu güncelle
+                var complaint = _context.Complaints.Find(response.ComplaintId);
+                if (complaint != null && complaint.Status == "pending")
+                {
+                    complaint.Status = "inprogress";
+                    complaint.UpdatedAt = DateTime.UtcNow;
+                }
+
+                _context.SaveChanges();
+                return response;
             }
-            _context.SaveChanges();
-            return response;
+            catch (Exception ex)
+            {
+                throw new Exception("Yanıt eklenemedi: " + ex.Message, ex);
+            }
         }
 
         public IEnumerable<Response> GetComplaintResponses(int complaintId, int userId)
@@ -73,18 +115,30 @@ namespace SikayetAIWeb.Services
                 .OrderBy(r => r.CreatedAt)
                 .ToList();
 
-            // Mark responses as read if viewed by complaint owner
-            var unreadResponses = responses.Where(r => !r.IsRead && r.Complaint.UserId == userId).ToList();
-            foreach (var res in unreadResponses)
+            // Okunmamış yanıtları işaretle (sadece şikayet sahibi için)
+            var complaint = _context.Complaints.Find(complaintId);
+            if (complaint != null && complaint.UserId == userId)
             {
-                res.IsRead = true;
-            }
+                var unreadResponses = responses.Where(r => !r.IsRead && r.ResponderId != userId).ToList();
+                foreach (var res in unreadResponses)
+                {
+                    res.IsRead = true;
+                }
 
-            if (unreadResponses.Any())
-                _context.SaveChanges();
+                if (unreadResponses.Any())
+                {
+                    try
+                    {
+                        _context.SaveChanges();
+                    }
+                    catch
+                    {
+                        // Okunma durumu kaydedilemezse kritik değil
+                    }
+                }
+            }
 
             return responses;
         }
-
     }
 }

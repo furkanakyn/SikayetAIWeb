@@ -1,19 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SikayetAIWeb.Models;
 using SikayetAIWeb.Services;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace SikayetAIWeb.Controllers
 {
     public class ComplaintController : Controller
     {
         private readonly ComplaintService _complaintService;
-        private readonly CategoryPredictionService _categoryService;
+        private readonly ILogger<ComplaintController> _logger;
 
-        public ComplaintController(ComplaintService complaintService, CategoryPredictionService categoryService)
+        public ComplaintController(
+            ComplaintService complaintService,
+            ILogger<ComplaintController> logger)
         {
             _complaintService = complaintService;
-            _categoryService = categoryService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -22,32 +29,73 @@ namespace SikayetAIWeb.Controllers
             return View();
         }
 
-        // Create Post
         [HttpPost]
         public async Task<IActionResult> Create(Complaint model)
         {
-            if (ModelState.IsValid)
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
             {
-                var userId = HttpContext.Session.GetInt32("UserId");
-                if (userId == null) return RedirectToAction("Login", "Auth");
-
-                var complaint = new Complaint
-                {
-                    Title = model.Title,
-                    Description = model.Description,
-                    CreatedAt = DateTime.Now,
-                    UserId = userId.Value
-                };
-
-                // Kategori tahmini yapıyoruz
-                var categories = await _categoryService.PredictCategoriesAsync(model.Description);
-                complaint.Category = categories.FirstOrDefault() ?? "Genel";
-
-                _complaintService.CreateComplaint(complaint);
-
-                return RedirectToAction("MyComplaints");
+                return Unauthorized(new { error = "Kullanıcı oturumu bulunamadı" });
             }
-            return View(model);
+
+            // UserId'yi manuel olarak ekleyerek "User field required" hatasını çözüyoruz
+            model.UserId = userId.Value;
+
+            // Kategori validasyonu (sadece kategori1 zorunlu)
+            if (string.IsNullOrWhiteSpace(model.Category))
+            {
+                ModelState.AddModelError("Category", "Kategori alanı zorunludur");
+            }
+
+            // Navigation property'leri ModelState validasyonundan çıkar
+            ModelState.Remove("User");
+            ModelState.Remove("Responses");
+
+            // UserId alanını da çıkar (manuel olarak ayarladığımız için)
+            ModelState.Remove("UserId");
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                );
+                return BadRequest(new { errors });
+            }
+
+            try
+            {
+                // Navigation property'leri temizle
+                model.User = null;
+                model.Responses = null;
+
+                // Gerekli alanları otomatik doldur
+                model.Status = "pending";
+
+                // Zaman damgalarını ayarla
+                model.CreatedAt = DateTime.UtcNow;
+                model.UpdatedAt = DateTime.UtcNow;
+
+                // Kategori2 boşsa null yap
+                if (string.IsNullOrWhiteSpace(model.Category2))
+                {
+                    model.Category2 = null;
+                }
+
+                // Şikayeti veritabanına kaydet
+                _complaintService.CreateComplaint(model);
+
+                return Ok(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Şikayet oluşturulurken hata");
+                return StatusCode(500, new
+                {
+                    error = "Şikayet kaydedilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
+                    detail = ex.Message
+                });
+            }
         }
 
         [HttpGet]
@@ -82,17 +130,26 @@ namespace SikayetAIWeb.Controllers
         public IActionResult AddResponse(int complaintId, string message)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null) return RedirectToAction("Login", "Auth");
+            if (userId == null) return Unauthorized();
 
-            var response = new Response
+            try
             {
-                ComplaintId = complaintId,
-                ResponderId = userId.Value,
-                Message = message
-            };
+                var response = new Response
+                {
+                    ComplaintId = complaintId,
+                    ResponderId = userId.Value,
+                    Message = message,
+                    CreatedAt = DateTime.UtcNow
+                };
 
-            _complaintService.AddResponse(response);
-            return RedirectToAction("Details", new { id = complaintId });
+                _complaintService.AddResponse(response);
+                return Ok(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Yanıt eklenirken hata");
+                return StatusCode(500, new { error = ex.Message });
+            }
         }
 
         [HttpGet]

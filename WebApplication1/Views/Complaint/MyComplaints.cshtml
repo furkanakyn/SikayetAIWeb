@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<Complaint>
+@using System.Globalization
 
 @{
     ViewData["Title"] = "Şikayetlerim";
@@ -35,7 +36,10 @@
                             <p class="card-text text-medium mb-3">@complaint.Description</p>
                             <div class="d-flex justify-content-between text-muted small">
                                 <span class="text-dark fw-semibold"><i class="fas fa-tag me-1"></i> @complaint.Category</span>
-                                <span class="text-medium"><i class="fas fa-calendar-alt me-1"></i> @complaint.CreatedAt.HasValue ? complaint.CreatedAt.Value.ToString("dd MMM yyyy") : "Tarih yok"</span>
+                                <span class="text-medium">
+                                    <i class="fas fa-calendar-alt me-1"></i>
+                                    @complaint.CreatedAt.ToString("dd MMM yyyy", CultureInfo.GetCultureInfo("tr-TR"))
+                                </span>
                             </div>
                         </div>
                         <div class="card-footer bg-transparent border-top-0 pt-0 text-end">
@@ -51,19 +55,6 @@
 </div>
 
 @functions {
-    string GetStatusClass(ComplaintStatus status)
-    {
-        return status switch
-        {
-            ComplaintStatus.Pending => "bg-secondary text-dark", // Beklemede: Açık gri, koyu metin
-            ComplaintStatus.InProgress => "bg-warning text-dark", // Devam Ediyor: Sarı, koyu metin
-            ComplaintStatus.Resolved => "bg-success text-light", // Çözüldü: Yeşil, beyaz metin
-            ComplaintStatus.Rejected => "bg-danger text-light", // Reddedildi: Kırmızı, beyaz metin
-            _ => "bg-secondary text-dark"
-        };
-    }
-
-    @functions {
     public enum ComplaintStatus
     {
         Pending,
@@ -74,10 +65,10 @@
 
     string GetStatusClass(string status)
     {
-        // Veritabanındaki string değeri enum’a çeviriyoruz
+        // Veritabanındaki string değeri enum'a çevir
         if (!Enum.TryParse<ComplaintStatus>(ToPascalCase(status), out var parsedStatus))
         {
-            parsedStatus = ComplaintStatus.Pending; 
+            parsedStatus = ComplaintStatus.Pending;
         }
 
         return parsedStatus switch
@@ -98,16 +89,14 @@
     }
 }
 
-}
-
 @section Scripts {
     <script>
-        // Opsiyonel: Şikayet kartlarına hafif bir animasyon eklemek için
+        // Şikayet kartlarına animasyon ekle
         document.addEventListener('DOMContentLoaded', function() {
             const complaintCards = document.querySelectorAll('.complaint-card');
             complaintCards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.05}s`; // Her karta küçük bir gecikme ekle
-                card.classList.add('animate__fadeInUp'); // animate.css sınıfı
+                card.style.animationDelay = `${index * 0.05}s`;
+                card.classList.add('animate__fadeInUp');
             });
         });
     </script>

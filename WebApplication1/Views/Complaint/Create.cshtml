@@ -23,23 +23,18 @@
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
 
+                <!-- Tahmin Butonu ve Gösterim -->
                 <div class="mb-3">
                     <button type="button" id="btnPredictCategory" class="btn btn-info mb-3">Kategori Tahmin Et</button>
 
-                    <label class="form-label">Tahmin Edilen Kategoriler</label>
+                    <label class="form-label">Tahmin Edilen Kategori(ler)</label>
+                    <input type="text" id="predictedCategoryDisplay1" class="form-control mb-2" placeholder="1. kategori" readonly />
+                    <input type="text" id="predictedCategoryDisplay2" class="form-control mb-2" placeholder="2. kategori" readonly />
 
-                    <!-- 1. kategori -->
-                    <input type="text" id="predictedCategoryDisplay1" class="form-control mb-2" placeholder="1. kategori tahmini..." readonly />
-                    <input type="hidden" asp-for="Category" id="predictedCategoryInput1" />
-
-                    <!-- 2. kategori -->
-                    <input type="text" id="predictedCategoryDisplay2" class="form-control mb-2" placeholder="2. kategori tahmini..." readonly />
-                    <input type="hidden" asp-for="Category2" id="predictedCategoryInput2" />
-
+                    <!-- Veritabanına kaydedilecek kategoriler -->
+                    <input type="hidden" asp-for="Category" id="predictedCategoryInput" />
+                    <input type="hidden" asp-for="Category2" id="predictedCategory2Input" />
                     <span asp-validation-for="Category" class="text-danger"></span>
-                    <span asp-validation-for="Category2" class="text-danger"></span>
-
-                    <small class="form-text text-muted">Yapay zeka iki kategori tahmini yapacak, ikisi de kaydedilecektir.</small>
                 </div>
 
                 <div class="mb-3">
@@ -53,7 +48,7 @@
                         <span id="submitSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
                         Şikayeti Gönder
                     </button>
-                    <a asp-action="MyComplaints" class="btn btn-secondary-outline btn-lg">İptal ve Şikayetlerime Dön</a>
+                    <a asp-controller="Complaint" asp-action="MyComplaints" class="btn btn-secondary-outline btn-lg">İptal ve Şikayetlerime Dön</a>
                 </div>
             </form>
         </div>
@@ -66,6 +61,7 @@
     }
 
     <script>
+        // Kategori Tahmin Fonksiyonu
         document.getElementById("btnPredictCategory").addEventListener("click", async function () {
             const description = document.querySelector("[name='Description']").value.trim();
             if (!description) {
@@ -74,6 +70,7 @@
             }
 
             this.disabled = true;
+            const originalText = this.textContent;
             this.textContent = "Tahmin ediliyor...";
 
             try {
@@ -83,28 +80,82 @@
                     body: JSON.stringify({ text: description })
                 });
 
-                if (!response.ok) throw new Error("Tahmin API'si hata döndürdü.");
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || "Tahmin API'si hata döndürdü.");
+                }
 
                 const data = await response.json();
-                const categories = data.predictedCategories || ["Genel"];
+                const categories = data.labels || [];
 
-                // 1. kategori
+                // Display alanlarını güncelle
                 document.getElementById("predictedCategoryDisplay1").value = categories[0] || "Genel";
-                document.getElementById("predictedCategoryInput1").value = categories[0] || "Genel";
-
-                // 2. kategori
                 document.getElementById("predictedCategoryDisplay2").value = categories[1] || "";
-                document.getElementById("predictedCategoryInput2").value = categories[1] || "";
 
-                // Gönder butonunu aç
+                // Veritabanına kaydedilecek kategoriler
+                document.getElementById("predictedCategoryInput").value = categories[0] || "Genel";
+                document.getElementById("predictedCategory2Input").value = categories[1] || "";
+
                 document.getElementById("submitBtn").disabled = false;
 
             } catch (error) {
+                console.error("Tahmin hatası:", error);
                 alert("Kategori tahmininde hata: " + error.message);
             } finally {
                 this.disabled = false;
-                this.textContent = "Kategori Tahmin Et";
+                this.textContent = originalText;
             }
+        });
+
+        // AJAX Form Gönderimi
+        document.getElementById("complaintForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById("submitBtn");
+            const spinner = document.getElementById("submitSpinner");
+            submitBtn.disabled = true;
+            spinner.classList.remove("d-none");
+
+            try {
+                const formData = new FormData(this);
+
+                const response = await fetch('@Url.Action("Create", "Complaint")', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // Başarılı kayıt sonrası yönlendirme
+                    window.location.href = '@Url.Action("MyComplaints", "Complaint")';
+                } else {
+                    const errorData = await response.json();
+                    let errorMessage = "Form gönderilirken hata oluştu";
+
+                    if (errorData && errorData.errors) {
+                        // ModelState hatalarını göster
+                        errorMessage = Object.values(errorData.errors).flat().join("\n");
+                    } else if (errorData && errorData.error) {
+                        errorMessage = errorData.error;
+                    }
+
+                    alert(errorMessage);
+                }
+            } catch (error) {
+                console.error("İstisna:", error);
+                alert("Beklenmeyen hata: " + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                spinner.classList.add("d-none");
+            }
+        });
+
+        // Form validasyon kontrolü
+        document.querySelectorAll('input, textarea').forEach(element => {
+            element.addEventListener('input', () => {
+                if (document.getElementById("predictedCategoryInput").value) {
+                    document.getElementById("submitBtn").disabled = false;
+                }
+            });
         });
     </script>
 }

@@ -31,7 +31,7 @@ else
                         <p class="card-text">@complaint.Description</p>
                         <div class="d-flex justify-content-between text-muted small">
                             <span>@complaint.Category</span>
-                            <span>@complaint.CreatedAt.HasValue ? complaint.CreatedAt.Value.ToString("dd MMM yyyy") : "Tarih yok"</span>
+                            <span>@complaint.CreatedAt.ToString("dd MMM yyyy") : "Tarih yok"</span>
                         </div>
                     </div>
                     <div class="card-footer bg-transparent">

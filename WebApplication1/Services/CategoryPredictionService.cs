@@ -26,7 +26,6 @@ namespace SikayetAIWeb.Services
             _httpClient.Timeout = TimeSpan.FromSeconds(10);
         }
 
-        // ✅ 2 kategori döndürür
         public async Task<List<string>> PredictCategoriesAsync(string complaintText)
         {
             if (string.IsNullOrWhiteSpace(complaintText))
@@ -50,7 +49,6 @@ namespace SikayetAIWeb.Services
 
                 if (result?.Labels != null && result.Labels.Count > 0)
                 {
-                    // İlk 2 tahmini döndür
                     return result.Labels.Take(2).ToList();
                 }
 
@@ -64,7 +62,7 @@ namespace SikayetAIWeb.Services
             return new List<string> { FallbackCategory };
         }
 
-        
+        // ✅ Eski Controller ile uyumlu: Tek kategori döner
         public async Task<string> PredictCategoryAsync(string complaintText)
         {
             var categories = await PredictCategoriesAsync(complaintText);
