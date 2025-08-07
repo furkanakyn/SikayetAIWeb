@@ -1,0 +1,83 @@
+﻿@model SikayetAIWeb.ViewModels.ComplaintEditViewModel
+
+
+@{
+    ViewData["Title"] = "Şikayeti Düzenle";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Şikayeti Düzenle</h1>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">@Model.Title</h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" asp-controller="Complaints" asp-area="Admin" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="Title" />
+                <input type="hidden" asp-for="Content" />
+                <input type="hidden" asp-for="ComplaintDate" />
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="Title" class="form-label">Başlık</label>
+                            <input asp-for="Title" class="form-control" readonly />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="Status" class="form-label">Durum</label>
+                            <select asp-for="Status" class="form-control">
+                                <option value="@ComplaintStatus.pending">Beklemede</option>
+                                <option value="@ComplaintStatus.in_progress">İşlemde</option>
+                                <option value="@ComplaintStatus.resolved">Tamamlandı</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="AssignedDepartmentId" class="form-label">Atanan Departman</label>
+                            <select asp-for="AssignedDepartmentId" class="form-control" asp-items="@ViewBag.Departments">
+                                <option value="">-- Departman Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="AssignedDepartmentId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="ComplaintDate" class="form-label">Şikayet Tarihi</label>
+                            <input asp-for="ComplaintDate" type="date" class="form-control" readonly />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Content" class="form-label">İçerik</label>
+                    <textarea asp-for="Content" class="form-control" rows="5" readonly></textarea>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="SolutionNote" class="form-label">Çözüm Notu</label>
+                    <textarea asp-for="SolutionNote" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="SolutionNote" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mt-4 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary-filled me-2"><i class="fas fa-save"></i> Kaydet</button>
+                    <a asp-action="Index" class="btn btn-secondary-outline"><i class="fas fa-arrow-left"></i> Geri Dön</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

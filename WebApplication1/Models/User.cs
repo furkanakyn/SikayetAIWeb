@@ -23,7 +23,7 @@ namespace SikayetAIWeb.Models
         public string FullName { get; set; }
         
         [Column("user_type")]
-        public UserType UserType { get; set; }
+        public UserType UserType { get; set; } = UserType.citizen;
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -31,7 +31,14 @@ namespace SikayetAIWeb.Models
         [Column("last_login")]
         public DateTime? LastLogin { get; set; }
 
+        [Column("updated_at")]
+        public DateTime? UpdatedAt { get; set; }
+
+        [Column("department_id")]
+        public int? DepartmentId { get; set; }
         // Navigation properties
         public List<Complaint> Complaints { get; set; } = new List<Complaint>();
+
+        public List<Response> Responses { get; set; } = new List<Response>();
     }
 }

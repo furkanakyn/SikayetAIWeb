@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Admin Anasayfası";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="jumbotron mt-5 text-center">
+    <h1 class="display-4">Admin Paneline Hoş Geldiniz!</h1>
+    <p class="lead">Bu panelden şikayetleri, kullanıcıları ve sistemin genel durumunu yönetebilirsiniz.</p>
+    <hr class="my-4">
+    <p>Detaylı istatistiklere ulaşmak için aşağıdaki butonu kullanın.</p>
+    <a class="btn btn-primary btn-lg" asp-area="Admin" asp-controller="Dashboard" asp-action="Index" role="button">Dashboard'a Git</a>
+</div>

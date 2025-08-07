@@ -1,0 +1,208 @@
+﻿@using System.Security.Claims
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Paneli</title>
+
+    <style>
+        :root {
+            --bg-primary: #f8f8f8;
+            --bg-secondary: #eeeeee;
+            --accent-dark: #222222;
+            --accent-light: #555555;
+            --accent-gradient-start: #333333;
+            --accent-gradient-end: #666666;
+            --accent-danger: #cc3333;
+            --text-dark: #222222;
+            --text-medium: #666666;
+            --text-light: #ffffff;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --shadow-light: rgba(0, 0, 0, 0.04);
+            --shadow-medium: rgba(0, 0, 0, 0.1);
+            --shadow-strong: rgba(0, 0, 0, 0.22);
+            --shadow-inset: rgba(0, 0, 0, 0.02);
+            --font-heading: 'Rubik', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --transition-speed: 0.5s;
+            --transition-ease: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: var(--font-body);
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            color: var(--text-dark);
+            background-color: var(--bg-primary);
+            display: block;
+        }
+    </style>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <style>
+        /* Admin Layout */
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: 18rem;
+            flex-shrink: 0;
+            background: var(--accent-dark);
+            color: var(--text-light);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+
+            .sidebar .nav-link {
+                color: rgba(255, 255, 255, 0.7);
+                padding: 1rem 1.5rem;
+                transition: background-color 0.3s, color 0.3s;
+            }
+
+                .sidebar .nav-link:hover {
+                    color: var(--text-light);
+                    background-color: var(--accent-light);
+                }
+
+            .sidebar .nav-item.active .nav-link {
+                background-color: var(--accent-light);
+                color: var(--text-light);
+                border-left: 5px solid var(--text-light);
+            }
+
+            .sidebar .nav-link i {
+                margin-right: 1rem;
+            }
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-primary);
+        }
+
+        .topbar {
+            background-color: var(--text-light);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.15);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-content {
+            padding: 2rem;
+            flex-grow: 1;
+        }
+        /* Card */
+        .card {
+            background-color: var(--text-light);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow-light);
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 20px 20px 0 0;
+        }
+        /* Buttons */
+        .btn-primary-filled {
+            background-color: var(--accent-dark);
+            color: var(--text-light);
+            border-color: var(--accent-dark);
+            transition: all var(--transition-speed) var(--transition-ease);
+        }
+
+            .btn-primary-filled:hover {
+                background-color: var(--accent-light);
+                border-color: var(--accent-light);
+                color: var(--text-light);
+            }
+
+        .btn-secondary-outline {
+            background-color: transparent;
+            color: var(--accent-dark);
+            border: 1px solid var(--accent-dark);
+            transition: all var(--transition-speed) var(--transition-ease);
+        }
+
+            .btn-secondary-outline:hover {
+                background-color: var(--accent-dark);
+                color: var(--text-light);
+            }
+
+        .btn-link {
+            color: var(--accent-dark);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <ul class="navbar-nav sidebar" id="accordionSidebar">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" asp-area="Admin" asp-controller="Home" asp-action="Index">
+                <div class="sidebar-brand-text mx-3 font-weight-bold">Admin Paneli</div>
+            </a>
+            <hr class="sidebar-divider my-0">
+
+            <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Home" ? "active" : "")">
+                <a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-home"></i><span>Anasayfa</span>
+                </a>
+            </li>
+
+            <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Dashboard" ? "active" : "")">
+                <a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                    <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+                </a>
+            </li>
+
+            <hr class="sidebar-divider">
+            <div class="sidebar-heading px-4">Yönetim</div>
+
+            <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Complaints" ? "active" : "")">
+                <a class="nav-link" asp-area="Admin" asp-controller="Complaints" asp-action="Index">
+                    <i class="fas fa-comments"></i><span>Şikayetler</span>
+                </a>
+            </li>
+
+            <li class="nav-item @(ViewContext.RouteData.Values["Controller"].ToString() == "Users" ? "active" : "")">
+                <a class="nav-link" asp-area="Admin" asp-controller="Users" asp-action="Index">
+                    <i class="fas fa-users"></i><span>Kullanıcılar</span>
+                </a>
+            </li>
+
+            <hr class="sidebar-divider d-none d-md-block">
+        </ul>
+        <div class="main-content">
+            <nav class="navbar navbar-expand navbar-light topbar mb-4 static-top">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown no-arrow">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <span class="nav-link d-flex align-items-center">
+                                <span class="d-none d-lg-inline text-gray-600 me-3">Hoşgeldin, <b>@User.FindFirstValue("FullName")</b></span>
+                                <form asp-area="Admin" asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-primary-filled">Çıkış Yap</button>
+                                </form>
+                            </span>
+                        }
+                    </li>
+                </ul>
+            </nav>
+            <div class="container-fluid page-content">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

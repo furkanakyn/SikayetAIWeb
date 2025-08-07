@@ -1,3 +1,6 @@
+su kesintisi, yol sorunu, çevre temizliği, gürültü, altyapı, ulaşım, park bahçe, hayvan, güvenlik, diğer
+
+
 su kesintisi -> 170 tane
 yol sorunu -> 172 tane
 çevre temizliği -> 175 tane

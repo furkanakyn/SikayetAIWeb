@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SikayetAIWeb.Models
 {
-    public enum ComplaintStatus { Pending, InProgress, Resolved, Rejected }
+    public enum ComplaintStatus { pending, in_progress, resolved, rejected }
 
     [Table("complaints")]
     public class Complaint
@@ -35,23 +35,25 @@ namespace SikayetAIWeb.Models
         public string? Location { get; set; }
 
         [Column("status")]
-        public string Status { get; set; } = "pending";
+        [EnumDataType(typeof(ComplaintStatus))]
+        public ComplaintStatus Status { get; set; } = ComplaintStatus.pending;
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } // Nullable değil
 
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; } // Nullable değil
+       
+        [Column("assigned_department_id")]
+        public int? AssignedDepartmentId { get; set; }
+
+        [Column("solution_note")]
+        public string? SolutionNote { get; set; }
 
         // Navigation properties
         public User? User { get; set; }
         public List<Response> Responses { get; set; } = new List<Response>();
 
-        [NotMapped]
-        public ComplaintStatus StatusEnum
-        {
-            get => Enum.Parse<ComplaintStatus>(Status, true);
-            set => Status = value.ToString().ToLower();
-        }
+     
     }
 }

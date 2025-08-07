@@ -2,8 +2,6 @@
 using SikayetAIWeb.Models;
 using SikayetAIWeb.Services;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Http; // HttpContext.Session için
-using System; // Exception ve Enum için, Guid için
 
 namespace SikayetAIWeb.Controllers
 {
@@ -11,11 +9,12 @@ namespace SikayetAIWeb.Controllers
     {
         private readonly AuthService _authService;
         private readonly ILogger<AuthController> _logger;
-
-        public AuthController(AuthService authService, ILogger<AuthController> logger)
+        private readonly ApplicationDbContext _db;
+        public AuthController(AuthService authService, ILogger<AuthController> logger, ApplicationDbContext db)
         {
             _authService = authService;
             _logger = logger;
+            _db = db;
         }
 
         [HttpGet]
@@ -35,22 +34,26 @@ namespace SikayetAIWeb.Controllers
             {
                 return View(model);
             }
-
             try
             {
                 var user = _authService.Login(model.Username, model.Password);
-
                 HttpContext.Session.SetInt32("UserId", user.Id);
                 HttpContext.Session.SetString("Username", user.Username);
                 HttpContext.Session.SetString("UserType", user.UserType.ToString());
                 HttpContext.Session.SetString("FullName", user.FullName);
                 HttpContext.Session.SetString("Email", user.Email);
-
                 _logger.LogInformation($"User {model.Username} logged in successfully");
-
-                // Giriş başarılı olduktan sonra ana sayfaya yönlendirirken benzersiz bir sorgu dizesi ekle
-                // Bu, tarayıcının önbelleği atlamasını ve sayfanın yeni bir kopyasını çekmesini sağlar.
-                return RedirectToAction("Index", "Home", new { refresh = Guid.NewGuid().ToString() });
+                // Eğer kullanıcı belediye ise departman kontrolü yap
+                if (user.UserType == UserType.municipality)
+                {
+                    var hasDepartment = _db.DepartmentCategories
+                      .Any(d => d.DepartmentId == user.DepartmentId);
+                    if (!hasDepartment)
+                    {
+                        return RedirectToAction("SelectDepartment", "Department");
+                    }
+                }
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
@@ -59,13 +62,12 @@ namespace SikayetAIWeb.Controllers
                 return View(model);
             }
         }
-
+        
         [HttpGet]
         public IActionResult Register()
         {
             return View(new RegisterViewModel());
         }
-
         [HttpPost]
         public IActionResult Register(RegisterViewModel model)
         {
@@ -73,7 +75,6 @@ namespace SikayetAIWeb.Controllers
             {
                 return View(model);
             }
-
             try
             {
                 var user = new User
@@ -81,24 +82,22 @@ namespace SikayetAIWeb.Controllers
                     Username = model.Username,
                     Email = model.Email,
                     FullName = model.FullName,
-                    UserType = (UserType)Enum.Parse(typeof(UserType), model.UserType)
-                };
+                    UserType = UserType.citizen,
 
+                };
                 var registeredUser = _authService.Register(user, model.Password);
 
                 _logger.LogInformation($"New user registered: {model.Username}");
-
-                // Kayıt sonrası otomatik giriş yap
-                HttpContext.Session.SetInt32("UserId", registeredUser.Id);
+                // Kayıt sonrası otomatik giriş yap
+                HttpContext.Session.SetInt32("UserId", registeredUser.Id);
                 HttpContext.Session.SetString("Username", registeredUser.Username);
                 HttpContext.Session.SetString("UserType", registeredUser.UserType.ToString());
                 HttpContext.Session.SetString("FullName", registeredUser.FullName);
                 HttpContext.Session.SetString("UserEmail", registeredUser.Email);
 
                 TempData["SuccessMessage"] = "Kayıt işleminiz başarıyla tamamlandı! Lütfen giriş yapın.";
-
-                // Kayıt başarılı sonrası doğrudan Login sayfasına yönlendir
-                return RedirectToAction("Login", "Auth");
+                // Kayıt başarılı sonrası doğrudan Login sayfasına yönlendir
+                return RedirectToAction("Login", "Auth");
             }
             catch (Exception ex)
             {
@@ -106,8 +105,8 @@ namespace SikayetAIWeb.Controllers
                 ViewBag.Error = ex.Message;
                 return View(model);
             }
-        }
 
+        }
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
@@ -120,4 +119,5 @@ namespace SikayetAIWeb.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
+
 }

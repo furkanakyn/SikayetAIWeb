@@ -23,7 +23,7 @@ else
             <div class="card complaint-card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span class="fw-bold">@complaint.Title</span>
-                    <span class="badge @GetStatusClass(complaint.Status) status-badge">
+                    <span class="badge @GetStatusClass(complaint.Status.ToString()) status-badge">
                         @complaint.Status
                         </span>
                     </div>
@@ -51,15 +51,15 @@ else
         // String'i enum'a dönüştürme işlemi ekleyin
         if (!Enum.TryParse<ComplaintStatus>(status, ignoreCase: true, out var parsedStatus))
         {
-            parsedStatus = ComplaintStatus.Pending; // Geçersiz değerler için varsayılan
+            parsedStatus = ComplaintStatus.pending; // Geçersiz değerler için varsayılan
         }
 
         return parsedStatus switch
         {
-            ComplaintStatus.Pending => "bg-secondary",
-            ComplaintStatus.InProgress => "bg-warning text-dark",
-            ComplaintStatus.Resolved => "bg-success",
-            ComplaintStatus.Rejected => "bg-danger",
+            ComplaintStatus.pending => "bg-secondary",
+            ComplaintStatus.in_progress => "bg-warning text-dark",
+            ComplaintStatus.resolved => "bg-success",
+            ComplaintStatus.rejected => "bg-danger",
             _ => "bg-secondary"
         };
     }

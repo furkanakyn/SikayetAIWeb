@@ -28,7 +28,7 @@
                     <div class="card complaint-card h-100 shadow-hover">
                         <div class="card-header d-flex justify-content-between align-items-center bg-transparent border-bottom-0 pb-0">
                             <h5 class="fw-bold text-primary mb-0">@complaint.Title</h5>
-                            <span class="badge @GetStatusClass(complaint.Status) status-badge">
+                            <span class="badge @GetStatusClass(complaint.Status.ToString()) status-badge">
                                 @complaint.Status
                             </span>
                         </div>

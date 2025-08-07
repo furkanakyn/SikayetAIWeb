@@ -24,7 +24,5 @@ namespace SikayetAIWeb.Models
         [Required(ErrorMessage = "Tam ad gerekli.")]
         public string FullName { get; set; }
 
-        [Required(ErrorMessage = "Kullanıcı türü seçiniz.")]
-        public string UserType { get; set; } // "Citizen" veya "Municipality"
     }
 }

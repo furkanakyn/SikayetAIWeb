@@ -48,12 +48,6 @@ namespace SikayetAIWeb.Services
                     complaint.UpdatedAt = DateTime.UtcNow;
                 }
 
-                // Varsayılan durumu ayarla
-                if (string.IsNullOrWhiteSpace(complaint.Status))
-                {
-                    complaint.Status = "pending";
-                }
-
                 // Entity Framework'e ekle
                 _context.Complaints.Add(complaint);
                 _context.SaveChanges();
@@ -93,9 +87,9 @@ namespace SikayetAIWeb.Services
 
                 // Şikayet durumunu güncelle
                 var complaint = _context.Complaints.Find(response.ComplaintId);
-                if (complaint != null && complaint.Status == "pending")
+                if (complaint != null && complaint.Status == ComplaintStatus.pending)
                 {
-                    complaint.Status = "inprogress";
+                    complaint.Status = ComplaintStatus.in_progress;
                     complaint.UpdatedAt = DateTime.UtcNow;
                 }
 
@@ -108,6 +102,7 @@ namespace SikayetAIWeb.Services
             }
         }
 
+        // Bu metot, Response modelinin UserId ve IsRead alanlarına göre güncellendi
         public IEnumerable<Response> GetComplaintResponses(int complaintId, int userId)
         {
             var responses = _context.Responses
@@ -119,12 +114,9 @@ namespace SikayetAIWeb.Services
             var complaint = _context.Complaints.Find(complaintId);
             if (complaint != null && complaint.UserId == userId)
             {
-                var unreadResponses = responses.Where(r => !r.IsRead && r.ResponderId != userId).ToList();
-                foreach (var res in unreadResponses)
-                {
-                    res.IsRead = true;
-                }
-
+                // Yanıtı, o anki kullanıcının kendisi yazmadıysa ve okunmamışsa işaretle
+                var unreadResponses = responses.Where(r => r.UserId != userId ).ToList();
+               
                 if (unreadResponses.Any())
                 {
                     try
@@ -133,7 +125,7 @@ namespace SikayetAIWeb.Services
                     }
                     catch
                     {
-                        // Okunma durumu kaydedilemezse kritik değil
+                        
                     }
                 }
             }

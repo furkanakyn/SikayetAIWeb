@@ -1,0 +1,46 @@
+﻿@model SikayetAIWeb.Models.User
+
+@{
+    ViewData["Title"] = "Kullanıcı Detayları";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Kullanıcı Detayları</h1>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">@Model.FullName</h6>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Ad Soyad:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.FullName)</dd>
+
+                <dt class="col-sm-3">Kullanıcı Adı:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Username)</dd>
+
+                <dt class="col-sm-3">E-posta:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+
+                <dt class="col-sm-3">Kullanıcı Tipi:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.UserType)</dd>
+
+                @if (Model.UserType == UserType.municipality && Model.DepartmentId.HasValue)
+                {
+                    <dt class="col-sm-3">Departman ID:</dt>
+                    <dd class="col-sm-9">@Html.DisplayFor(model => model.DepartmentId)</dd>
+                }
+
+                <dt class="col-sm-3">Oluşturulma Tarihi:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.CreatedAt)</dd>
+            </dl>
+        </div>
+        <div class="card-footer d-flex justify-content-end">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">Düzenle</a>
+            <a asp-action="Index" class="btn btn-secondary-outline">Geri Dön</a>
+        </div>
+    </div>
+</div>

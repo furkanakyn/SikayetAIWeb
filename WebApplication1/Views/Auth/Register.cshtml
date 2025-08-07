@@ -41,15 +41,6 @@
                     <input asp-for="FullName" class="form-control" placeholder="Adınız Soyadınız" required>
                     <span asp-validation-for="FullName" class="text-danger"></span>
                 </div>
-                <div class="mb-3">
-                    <label asp-for="UserType" class="form-label">Kullanıcı Türü</label>
-                    <select asp-for="UserType" class="form-select" required>
-                        <option value="">Seçiniz</option>
-                        <option value="citizen">Vatandaş</option>
-                        <option value="municipality">Belediye Çalışanı</option>
-                    </select>
-                    <span asp-validation-for="UserType" class="text-danger"></span>
-                </div>
                 <div class="d-grid gap-2 mt-4">
                     <button type="submit" class="btn btn-primary btn-lg">Kayıt Ol</button>
                     <a asp-action="Login" asp-controller="Auth" class="btn btn-link">Zaten hesabınız var mı? Giriş yapın</a>

@@ -1,56 +1,112 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using SikayetAIWeb.Models;
 using SikayetAIWeb.Services;
-using System.Net.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Hizmetler
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 
-// Add session support
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+// Normal kullanýcýlar için Session ayarlarý
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.Name = "UserSession"; // Normal kullanýcýlar için Session adý
 });
 
-// Add DbContext
+// Admin için SADECE Cookie Authentication
+builder.Services.AddAuthentication(options =>
+{
+    // Varsayýlan þemayý net bir þekilde belirtiyoruz.
+    // Bu, Admin panelinin login/logout iþlemlerinde kullanýlacak.
+    options.DefaultScheme = "AdminAuthCookie";
+})
+.AddCookie("AdminAuthCookie", options =>
+{
+    options.LoginPath = "/Admin/Account/Login";
+    options.AccessDeniedPath = "/Admin/Account/AccessDenied";
+    options.Cookie.Name = "AdminAuthCookie";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    options.SlidingExpiration = true;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.Path = "/";
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+});
+
+// DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register services
+// Servisler
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ComplaintService>();
 builder.Services.AddHttpClient<CategoryPredictionService>();
 builder.Services.AddScoped<CategoryPredictionService>();
 
-
 var app = builder.Build();
 
-// Apply migrations
+// ... (Migration ve Admin kullanýcý oluþturma kýsmý ayný kalýr) ...
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
+    var services = scope.ServiceProvider;
+    var db = services.GetRequiredService<ApplicationDbContext>();
+    
+    if (!db.Users.Any(u => u.UserType == UserType.admin))
+    {
+        var authService = services.GetRequiredService<AuthService>();
+        authService.CreatePasswordHash("1234", out string passwordHash);
+
+        db.Users.Add(new User
+        {
+            Username = "admin",
+            PasswordHash = passwordHash,
+            Email = "admin@example.com",
+            FullName = "Admin User",
+            UserType = UserType.admin,
+            CreatedAt = DateTime.UtcNow
+        });
+        db.SaveChanges();
+    }
 }
 
-// Configure the HTTP request pipeline.
+// Middleware pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseRouting();
-app.UseSession();
-app.UseAuthorization();
 
+app.UseRouting();
+
+// Önce Authentication ve Authorization, sonra Session
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseSession();
+
+// Rotalar
+// ÖNEMLÝ: Area rotasý, varsayýlan rotadan ÖNCE gelmelidir!
+app.MapAreaControllerRoute(
+    name: "MunicipalityArea",
+    areaName: "Municipality",
+    pattern: "Municipality/{controller=Dashboard}/{action=Index}/{id?}");
+
+app.MapAreaControllerRoute(
+    name: "AdminArea",
+    areaName: "Admin",
+    pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
+
+// Varsayýlan rota
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

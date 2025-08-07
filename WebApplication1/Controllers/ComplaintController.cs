@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SikayetAIWeb.Models;
 using SikayetAIWeb.Services;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 
 namespace SikayetAIWeb.Controllers
 {
@@ -14,13 +15,16 @@ namespace SikayetAIWeb.Controllers
     {
         private readonly ComplaintService _complaintService;
         private readonly ILogger<ComplaintController> _logger;
+        private readonly ApplicationDbContext _context; // Hata 2'yi çözmek için eklendi
 
         public ComplaintController(
             ComplaintService complaintService,
-            ILogger<ComplaintController> logger)
+            ILogger<ComplaintController> logger,
+            ApplicationDbContext context) // ApplicationDbContext bağımlılığı eklendi
         {
             _complaintService = complaintService;
             _logger = logger;
+            _context = context; // Enjekte edilen nesne atandı
         }
 
         [HttpGet]
@@ -38,20 +42,15 @@ namespace SikayetAIWeb.Controllers
                 return Unauthorized(new { error = "Kullanıcı oturumu bulunamadı" });
             }
 
-            // UserId'yi manuel olarak ekleyerek "User field required" hatasını çözüyoruz
             model.UserId = userId.Value;
 
-            // Kategori validasyonu (sadece kategori1 zorunlu)
             if (string.IsNullOrWhiteSpace(model.Category))
             {
                 ModelState.AddModelError("Category", "Kategori alanı zorunludur");
             }
 
-            // Navigation property'leri ModelState validasyonundan çıkar
             ModelState.Remove("User");
             ModelState.Remove("Responses");
-
-            // UserId alanını da çıkar (manuel olarak ayarladığımız için)
             ModelState.Remove("UserId");
 
             if (!ModelState.IsValid)
@@ -65,24 +64,22 @@ namespace SikayetAIWeb.Controllers
 
             try
             {
-                // Navigation property'leri temizle
                 model.User = null;
                 model.Responses = null;
 
-                // Gerekli alanları otomatik doldur
-                model.Status = "pending";
-
-                // Zaman damgalarını ayarla
+                model.Status = ComplaintStatus.pending;
                 model.CreatedAt = DateTime.UtcNow;
                 model.UpdatedAt = DateTime.UtcNow;
-
-                // Kategori2 boşsa null yap
                 if (string.IsNullOrWhiteSpace(model.Category2))
                 {
                     model.Category2 = null;
                 }
 
-                // Şikayeti veritabanına kaydet
+                if (string.IsNullOrWhiteSpace(model.Location))
+                {
+                    model.Location = null;
+                }
+
                 _complaintService.CreateComplaint(model);
 
                 return Ok(new { success = true });
@@ -113,15 +110,16 @@ namespace SikayetAIWeb.Controllers
         {
             var userType = HttpContext.Session.GetString("UserType");
             if (string.IsNullOrEmpty(userType) ||
-                (userType != UserType.municipality.ToString() &&
-                 userType != UserType.admin.ToString()))
+                (userType != UserType.municipality.ToString().ToLower() &&
+                 userType != UserType.admin.ToString().ToLower()))
             {
                 return RedirectToAction("Login", "Auth");
             }
 
+            // `GetDepartmentComplaints` metodunun beklediği parametrelere göre çağrıyı düzenliyoruz
             var complaints = _complaintService.GetDepartmentComplaints(
-                Enum.Parse<UserType>(userType),
-                null);
+                Enum.Parse<UserType>(userType, true),
+                null); // Burada category parametresi boş bırakıldı, eğer filtreleme yapılacaksa buradan gönderilebilir.
 
             return View(complaints);
         }
@@ -137,8 +135,8 @@ namespace SikayetAIWeb.Controllers
                 var response = new Response
                 {
                     ComplaintId = complaintId,
-                    ResponderId = userId.Value,
-                    Message = message,
+                    UserId = userId.Value,
+                    Content = message,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -163,8 +161,8 @@ namespace SikayetAIWeb.Controllers
 
             var userType = HttpContext.Session.GetString("UserType");
             if (complaint.UserId != userId.Value &&
-                userType != UserType.municipality.ToString() &&
-                userType != UserType.admin.ToString())
+                userType != UserType.municipality.ToString().ToLower() &&
+                userType != UserType.admin.ToString().ToLower())
             {
                 return Forbid();
             }
