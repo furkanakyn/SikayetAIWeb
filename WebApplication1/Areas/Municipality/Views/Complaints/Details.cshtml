@@ -1,0 +1,240 @@
+﻿@model SikayetAIWeb.Models.Complaint
+@using SikayetAIWeb.ViewModels
+
+@{
+    ViewData["Title"] = "Şikayet Detayları";
+    Layout = "~/Areas/Municipality/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /*
+         * ŞİKAYET DETAY SAYFASI İÇİN ÖZEL CSS STİLLERİ
+         */
+
+    :root {
+        --primary: #007bff;
+        --success: #28a745;
+        --danger: #dc3545;
+        --warning: #ffc107;
+        --dark: #343a40;
+        --light: #f8f9fa;
+        --border-color: #dee2e6;
+        --text-dark: #343a40;
+        --text-medium: #6c757d;
+        --bg-primary: #ffffff;
+        --shadow-light: rgba(0, 0, 0, 0.05);
+    }
+
+    .complaint-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+        .complaint-header h1 {
+            color: var(--text-dark);
+        }
+
+    .status-badge {
+        font-size: 0.9em;
+        font-weight: 600;
+        padding: 0.4em 1em;
+        border-radius: 1rem;
+        text-transform: capitalize;
+    }
+
+    .status-badge-pending {
+        background-color: #f0ad4e;
+        color: white;
+    }
+
+    .status-badge-in_progress {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .status-badge-resolved {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .status-badge-rejected {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .card-body .info-item {
+        display: flex;
+        flex-direction: column;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+        .card-body .info-item:last-child {
+            border-bottom: none;
+        }
+
+    .info-label {
+        font-weight: 600;
+        color: var(--text-medium);
+        font-size: 0.9rem;
+    }
+
+    .info-value {
+        font-weight: 500;
+        color: var(--text-dark);
+        font-size: 1rem;
+        word-wrap: break-word;
+    }
+
+    .form-group .form-control,
+    .form-group .form-select {
+        border-radius: 0.5rem;
+        border-color: var(--border-color);
+        box-shadow: none;
+        transition: border-color 0.2s ease-in-out;
+    }
+
+        .form-group .form-control:focus,
+        .form-group .form-select:focus {
+            border-color: var(--accent-dark);
+            box-shadow: 0 0 0 0.25rem rgba(44, 62, 80, 0.25);
+        }
+
+    .btn-update {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        color: white;
+        transition: all 0.2s ease-in-out;
+    }
+
+        .btn-update:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+    .response-item {
+        background-color: var(--bg-primary);
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 10px var(--shadow-light);
+    }
+
+        .response-item .response-meta {
+            font-size: 0.9em;
+            color: var(--text-medium);
+            margin-bottom: 0.5rem;
+        }
+
+        .response-item .response-author {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .response-item .response-content {
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+</style>
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Şikayet Detayları</h1>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Şikayet #@Model.ComplaintId</h6>
+                    @{
+                        string statusBadgeClass = Model.Status switch
+                        {
+                            ComplaintStatus.pending => "status-badge-pending",
+                            ComplaintStatus.in_progress => "status-badge-in_progress",
+                            ComplaintStatus.resolved => "status-badge-resolved",
+                            ComplaintStatus.rejected => "status-badge-rejected",
+                            _ => ""
+                        };
+                    }
+                    <span class="status-badge @statusBadgeClass">
+                        @Model.Status.ToString().Replace("_", " ")
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="info-item">
+                    <span class="info-label">Şikayet Eden:</span>
+                    <span class="info-value">@(Model.User?.FullName ?? "Bilinmiyor")</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Başlık:</span>
+                    <span class="info-value">@Model.Title</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Kategori:</span>
+                    <span class="info-value">@Model.Category @(string.IsNullOrEmpty(Model.Category2) ? "" : ", " + Model.Category2)</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Açıklama:</span>
+                    <span class="info-value">@Model.Description</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Oluşturulma Tarihi:</span>
+                    <span class="info-value">@Model.CreatedAt.ToString("g")</span>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.Reply))
+                {
+                    <div class="info-item bg-light p-3 mt-3 rounded">
+                        <span class="info-label text-success">Belediye Yanıtı (Kullanıcıya Görünür):</span>
+                        <span class="info-value">@Model.Reply</span>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.SolutionNote))
+                {
+                    <div class="info-item bg-light p-3 mt-3 rounded border-start border-3 border-secondary">
+                        <span class="info-label text-secondary">Dahili Çözüm Notu:</span>
+                        <span class="info-value">@Model.SolutionNote</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Durum ve Yanıt Güncelleme</h6>
+            </div>
+            <div class="card-body">
+                <form asp-area="Municipality" asp-controller="Complaints" asp-action="UpdateAndReply" method="post">
+                    <input type="hidden" name="id" value="@Model.ComplaintId" />
+                    <div class="form-group mb-3">
+                        <label for="status" class="form-label">Durum:</label>
+                        <select name="status" class="form-select">
+                            <option value="@ComplaintStatus.pending" selected="@(Model.Status == ComplaintStatus.pending)">Beklemede</option>
+                            <option value="@ComplaintStatus.in_progress" selected="@(Model.Status == ComplaintStatus.in_progress)">İşlemde</option>
+                            <option value="@ComplaintStatus.resolved" selected="@(Model.Status == ComplaintStatus.resolved)">Çözüldü</option>
+                            <option value="@ComplaintStatus.rejected" selected="@(Model.Status == ComplaintStatus.rejected)">Reddedildi</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="reply" class="form-label">Belediye Yanıtı (Kullanıcıya Görünür):</label>
+                        <textarea name="reply" rows="4" class="form-control" placeholder="Kullanıcıya iletilecek yanıtı buraya yazın...">@Model.Reply</textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="solutionNote" class="form-label">Dahili Çözüm Notu (Sadece Belediye İçin):</label>
+                        <textarea name="solutionNote" rows="4" class="form-control" placeholder="Dahili notlarınızı buraya yazın...">@Model.SolutionNote</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-update w-100">
+                        <i class="bi bi-arrow-repeat me-1"></i> Güncelle
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

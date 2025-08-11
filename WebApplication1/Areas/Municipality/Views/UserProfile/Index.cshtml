@@ -1,0 +1,162 @@
+﻿@model SikayetAIWeb.Models.User
+
+@{
+    ViewData["Title"] = "Profilim";
+    Layout = "~/Areas/Municipality/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Profil Sayfası Başlığı -->
+<div class="d-flex align-items-center mb-4">
+    <div class="flex-shrink-0 me-3">
+        <div class="profile-icon">
+            <i class="fas fa-user-circle fa-2x"></i>
+        </div>
+    </div>
+    <div class="flex-grow-1">
+        <h1 class="h3 mb-0 text-dark">Profilim</h1>
+        <p class="text-medium mb-0">Hesap bilgilerinizi buradan görüntüleyebilir ve güncelleyebilirsiniz.</p>
+    </div>
+</div>
+
+<!-- Profil Bilgileri Kartı -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold">Kullanıcı Bilgileri</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6 mb-3">
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-id-card-alt me-2"></i> Ad Soyad:</span>
+                            <span class="info-value">@Model.FullName</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-user me-2"></i> Kullanıcı Adı:</span>
+                            <span class="info-value">@Model.Username</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-tag me-2"></i> Rol:</span>
+                            <span class="info-value">@Model.UserType.ToString()</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-envelope me-2"></i> Email:</span>
+                            <span class="info-value">@Model.Email</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <div class="info-item">
+                            <span class="info-label"><i class="fas fa-building me-2"></i> Departman:</span>
+                            <span class="info-value">@Model.Department.DepartmentName</span>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-4">
+                <a href="#" class="btn btn-primary btn-icon-split">
+                    <span class="icon text-white-50"><i class="fas fa-pencil-alt"></i></span>
+                    <span class="text">Bilgileri Güncelle</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /*
+         * PROFİL SAYFASI İÇİN ÖZEL CSS STİLLERİ
+         */
+
+    .text-dark {
+        color: var(--text-dark);
+    }
+
+    .text-medium {
+        color: var(--text-medium);
+    }
+
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 4px 20px var(--shadow-light);
+        border: 1px solid var(--border-color);
+    }
+
+    .card-header {
+        background-color: var(--bg-primary);
+        border-bottom: 1px solid var(--border-color);
+        border-radius: 12px 12px 0 0;
+    }
+
+        .card-header h6 {
+            color: var(--accent-dark);
+            font-weight: 600;
+        }
+
+    .profile-icon {
+        background-color: #2c3e50;
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        padding: 0.75rem 0;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: var(--text-medium);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.2rem;
+    }
+
+        .info-label i {
+            color: var(--accent-dark);
+            font-size: 1rem;
+            margin-right: 0.5rem;
+        }
+
+    .info-value {
+        font-weight: 500;
+        color: var(--text-dark);
+        font-size: 1rem;
+    }
+
+    .btn-icon-split .icon {
+        background-color: rgba(0, 0, 0, 0.15);
+        display: inline-block;
+        padding: 0.5rem;
+        border-top-left-radius: 0.35rem;
+        border-bottom-left-radius: 0.35rem;
+    }
+
+    .btn-icon-split .text {
+        padding: 0.5rem 0.75rem;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background-color: var(--accent-dark);
+        border-color: var(--accent-dark);
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--accent-light);
+            border-color: var(--accent-light);
+        }
+</style>

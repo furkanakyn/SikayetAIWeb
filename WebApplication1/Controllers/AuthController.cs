@@ -46,7 +46,7 @@ namespace SikayetAIWeb.Controllers
                 // Eğer kullanıcı belediye ise departman kontrolü yap
                 if (user.UserType == UserType.municipality)
                 {
-                    var hasDepartment = _db.DepartmentCategories
+                    var hasDepartment = _db.Departments
                       .Any(d => d.DepartmentId == user.DepartmentId);
                     if (!hasDepartment)
                     {

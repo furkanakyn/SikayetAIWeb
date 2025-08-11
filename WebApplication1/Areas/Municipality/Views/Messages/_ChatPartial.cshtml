@@ -1,0 +1,96 @@
+﻿@using SikayetAIWeb.ViewModels
+@model ChatViewModel
+
+<!-- RecipientUser null ise hata oluşmaması için kontrol ekledik -->
+@if (Model.RecipientUser != null)
+{
+    <div class="card h-100">
+        <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+            <!-- Alıcı kullanıcının adı ve soyadı -->
+            <h5 class="mb-0">
+                <i class="fas fa-user-circle me-2"></i>
+                @Model.RecipientUser.FullName
+            </h5>
+            <!-- Buraya ek eylemler gelebilir (örn. arama butonu) -->
+        </div>
+        <div class="card-body chat-messages-container" style="overflow-y: auto;">
+            <!-- Sohbet mesajları buraya gelecek -->
+            @if (Model.Conversation != null && Model.Conversation.Messages.Any())
+            {
+                foreach (var message in Model.Conversation.Messages.OrderBy(m => m.SentAt))
+                {
+                    bool isSentByUser = message.SenderId == Model.CurrentUser.Id;
+                    <div class="d-flex @(isSentByUser ? "justify-content-end" : "justify-content-start") mb-2">
+                        <div class="message p-3 rounded-3 @(isSentByUser ? "bg-primary text-white" : "bg-light")">
+                            @message.Content
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="d-flex justify-content-center h-100 align-items-center">
+                    <p class="text-muted">Henüz hiç mesajınız yok. Bir mesaj göndererek sohbeti başlatın.</p>
+                </div>
+            }
+        </div>
+        <div class="card-footer bg-white border-top">
+            <!-- Mesaj gönderme formu buraya gelecek -->
+            <form id="messageForm" class="d-flex">
+                <input type="hidden" name="recipientId" value="@Model.RecipientUser.Id" />
+                <input type="text" name="messageContent" id="messageContent" class="form-control rounded-pill me-2" placeholder="Mesaj yaz..." />
+                <button type="submit" class="btn btn-primary rounded-pill">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+}
+else
+{
+    <div class="d-flex justify-content-center h-100 align-items-center">
+        <p class="text-danger">Kullanıcı bilgileri bulunamadı. Lütfen sayfayı yenileyin.</p>
+    </div>
+}
+
+<script>
+    // Mesaj gönderme formunu yakalayan AJAX kodu
+    $('#messageForm').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var messageContent = $('#messageContent').val();
+        var recipientId = form.find('input[name="recipientId"]').val();
+
+        if (messageContent.trim() !== '') {
+            $.ajax({
+                url: '@Url.Action("SendMessage", "Messages", new { area = "Municipality" })',
+                type: 'POST',
+                data: {
+                    recipientId: recipientId,
+                    content: messageContent
+                },
+                success: function(response) {
+                    // Mesaj gönderildikten sonra sohbeti yeniden yükle
+                    loadChat(recipientId);
+                    $('#messageContent').val('');
+                },
+                error: function(xhr, status, error) {
+                    console.error("Mesaj gönderilirken hata oluştu: ", status, error);
+                    alert("Mesaj gönderilirken bir hata oluştu. Lütfen tekrar deneyin.");
+                }
+            });
+        }
+    });
+
+    // Sohbet penceresini otomatik olarak en aşağı kaydırmak
+    function scrollToBottom() {
+        var chatContainer = $('.chat-messages-container');
+        if (chatContainer.length) {
+            chatContainer.scrollTop(chatContainer.prop("scrollHeight"));
+        }
+    }
+
+    $(document).ready(function() {
+        scrollToBottom();
+    });
+</script>

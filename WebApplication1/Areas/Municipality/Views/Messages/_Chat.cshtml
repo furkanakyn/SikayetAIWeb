@@ -1,0 +1,51 @@
+﻿@model SikayetAIWeb.ViewModels.ChatViewModel
+
+<div class="chat-header border-bottom pb-3 mb-3">
+    <h4>@Model.RecipientUser.FullName</h4>
+</div>
+
+<div class="chat-messages flex-grow-1 overflow-auto mb-3">
+    @foreach (var message in Model.Conversation.Messages)
+    {
+        var isSender = message.SenderId == Model.CurrentUser.Id;
+        <div class="d-flex @(isSender ? "justify-content-end" : "justify-content-start") mb-2">
+            <div class="card p-2" style="max-width: 70%; background-color: @(isSender ? "#dcf8c6" : "#f1f0f0");">
+                <div class="card-body p-2">
+                    <p class="mb-0">@message.Content</p>
+                    <small class="text-muted d-block text-end" style="font-size: 0.75rem;">@message.SentAt.ToShortTimeString()</small>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="chat-input mt-auto">
+    <form asp-action="SendMessage" asp-controller="Messages" method="post" id="messageForm" data-conversation-id="@Model.Conversation.ConversationId">
+        <input type="hidden" name="conversationId" value="@Model.Conversation.ConversationId" />
+        <div class="input-group">
+            <textarea name="content" class="form-control" placeholder="Mesajınızı yazın..." rows="1" required></textarea>
+            <button type="submit" class="btn btn-primary">Gönder</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        // Form gönderimi sonrası sayfayı yenilemek yerine AJAX ile mesajı ekleme
+        $('#messageForm').submit(function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+            var data = form.serialize();
+
+            $.post(url, data, function(response) {
+                // Burada başarılı mesaj gönderiminden sonra sohbeti yeniden yükleyebilirsiniz
+                loadChat(@Model.RecipientUser.Id); // loadChat metodu çağrılıyor
+            });
+        });
+
+        // Sohbet penceresini en alta kaydırma
+        var chatMessages = $('.chat-messages');
+        chatMessages.scrollTop(chatMessages.prop("scrollHeight"));
+    </script>
+}

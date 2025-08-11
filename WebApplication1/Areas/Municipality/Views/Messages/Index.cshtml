@@ -1,0 +1,224 @@
+﻿@using System.Security.Claims
+@model SikayetAIWeb.ViewModels.MessageIndexViewModel
+
+@{
+    ViewData["Title"] = "Mesajlaşma";
+    Layout = "~/Areas/Municipality/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Genel Stil Ayarları */
+    :root {
+        --bg-primary: #f8f9fa;
+        --bg-secondary: #ffffff;
+        --border-color: #e9ecef;
+        --accent-color: #007bff;
+        --text-dark: #343a40;
+        --text-muted: #6c757d;
+        --shadow-light: rgba(0, 0, 0, 0.08);
+        --transition-speed: 0.3s;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f1f5f9;
+    }
+
+    /* Ana Düzen (Layout) */
+    .chat-container {
+        display: flex;
+        height: calc(100vh - 120px);
+        background-color: var(--bg-secondary);
+        border-radius: 12px;
+        box-shadow: 0 8px 30px var(--shadow-light);
+        overflow: hidden;
+    }
+
+    .chat-sidebar {
+        width: 350px;
+        background-color: var(--bg-primary);
+        border-right: 1px solid var(--border-color);
+        padding: 1.5rem;
+        overflow-y: auto;
+        flex-shrink: 0;
+    }
+
+    .chat-main {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--bg-secondary);
+        padding: 1.5rem;
+    }
+
+    /* Tab Navigasyonu */
+    .nav-pills .nav-link {
+        font-weight: 500;
+        color: var(--text-muted);
+        transition: all var(--transition-speed);
+        border-radius: 8px;
+    }
+
+        .nav-pills .nav-link.active {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+    /* Departman ve Konuşma Listesi */
+    .list-group-item {
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+        border: none;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+    }
+
+        .list-group-item.list-group-item-action:hover {
+            background-color: #e9ecef;
+        }
+
+        .list-group-item.list-group-item-action.active {
+            background-color: #e0e6f0;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+    .list-group-item-action.collapse-trigger {
+        font-weight: 500;
+    }
+
+    /* Çalışanlar Listesi */
+    .collapse-item-container {
+        padding-left: 1rem;
+        border-left: 2px solid #dee2e6;
+    }
+
+        .collapse-item-container .list-group-item {
+            padding-left: 0.5rem;
+            border-radius: 6px;
+        }
+
+    /* Seçim Çakışması Engeli */
+    .conversation-item, .department-item, .user-item {
+        position: relative;
+    }
+</style>
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-dark">Mesajlaşma</h1>
+</div>
+
+<div class="chat-container">
+    <div class="chat-sidebar">
+        <ul class="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="departments-tab" data-bs-toggle="pill" data-bs-target="#departments" type="button" role="tab" aria-controls="departments" aria-selected="true">Departmanlar</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="conversations-tab" data-bs-toggle="pill" data-bs-target="#conversations" type="button" role="tab" aria-controls="conversations" aria-selected="false">Konuşmalarım</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="departments" role="tabpanel" aria-labelledby="departments-tab">
+                <div class="list-group">
+                    @foreach (var department in Model.Departments)
+                    {
+                        <div class="list-group-item list-group-item-action department-item" data-bs-toggle="collapse" href="#dept-@department.DepartmentId" role="button">
+                            @department.DepartmentName
+                        </div>
+                        <div class="collapse collapse-item-container" id="dept-@department.DepartmentId">
+                            <ul class="list-group list-group-flush" id="users-@department.DepartmentId">
+                                <li class="list-group-item">Çalışanlar yükleniyor...</li>
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="conversations" role="tabpanel" aria-labelledby="conversations-tab">
+                <div class="list-group">
+                    @foreach (var conv in Model.Conversations)
+                    {
+                        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                        var recipient = (conv.Participant1Id == userId) ? conv.Participant2 : conv.Participant1;
+                        <div class="list-group-item list-group-item-action conversation-item" onclick="loadChat('@recipient.Id')">
+                            @recipient.FullName
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-main" id="chat-window">
+        <div class="d-flex justify-content-center h-100 align-items-center">
+            <p class="text-muted">Sol taraftan bir departman veya konuşma seçin.</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Departmana tıklanınca çalışanları yükleme
+            $('.department-item').on('click', function() {
+                var departmentId = $(this).attr('href').replace('#dept-', '');
+                var userList = $(this).next().find('ul');
+
+                // Active sınıfını sadece departman listesinden kaldır
+                $('.list-group-item').removeClass('active');
+                $(this).addClass('active');
+
+                // Çalışan listesini temizle ve yükleniyor animasyonu ekle
+                userList.empty().append('<li class="list-group-item text-center">Yükleniyor...</li>');
+
+                $.ajax({
+                    url: '@Url.Action("GetUsersByDepartment", "Messages", new { area = "Municipality" })',
+                    type: 'GET',
+                    data: { departmentId: departmentId },
+                    success: function(users) {
+                        userList.empty();
+                        if (users.length > 0) {
+                            users.forEach(function(user) {
+                                userList.append('<div class="list-group-item list-group-item-action user-item" onclick="loadChat(' + user.id + ')">' + user.fullName + '</div>');
+                            });
+                        } else {
+                            userList.append('<div class="list-group-item">Bu departmanda çalışan bulunamadı.</div>');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        userList.empty().append('<div class="list-group-item text-danger">Çalışanlar yüklenirken bir hata oluştu.</div>');
+                        console.error("AJAX Hatası: ", status, error);
+                    }
+                });
+            });
+
+            // Sohbet penceresini yükleme
+            window.loadChat = function(recipientId) {
+                $('#chat-window').empty().append('<div class="d-flex justify-content-center align-items-center h-100"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
+
+                // Önceki tüm aktif sınıflarını temizle
+                $('.list-group-item').removeClass('active');
+
+                // Tıklanan öğeye active sınıfını ekle
+                $(`[onclick="loadChat('${recipientId}')"]`).addClass('active');
+
+                $.ajax({
+                    url: '@Url.Action("Chat", "Messages", new { area = "Municipality" })',
+                    type: 'GET',
+                    data: { recipientId: recipientId },
+                    success: function(html) {
+                        $('#chat-window').html(html);
+                    },
+                    error: function(xhr, status, error) {
+                        $('#chat-window').html('<p class="text-danger text-center">Sohbet penceresi yüklenirken bir hata oluştu.</p>');
+                        console.error("AJAX Hatası: ", status, error);
+                    }
+                });
+            }
+        });
+    </script>
+}

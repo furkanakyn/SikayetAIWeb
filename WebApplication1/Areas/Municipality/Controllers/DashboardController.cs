@@ -6,11 +6,12 @@ using SikayetAIWeb.ViewModels;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace SikayetAIWeb.Areas.Municipality.Controllers
 {
     [Area("Municipality")]
-    [Authorize(Roles = "municipality")] // Sadece belediye çalışanları bu alana girebilir
+    [Authorize(Roles = "municipality")]
     public class DashboardController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,7 +23,6 @@ namespace SikayetAIWeb.Areas.Municipality.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Giriş yapan kullanıcının ID'sini al
             var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdString))
             {
@@ -34,19 +34,39 @@ namespace SikayetAIWeb.Areas.Municipality.Controllers
 
             if (user?.DepartmentId == null)
             {
-                return Forbid(); // Departmanı olmayan kullanıcılar için erişimi reddet
+                return Forbid();
             }
 
-            // Kullanıcının departmanına ait bekleyen şikayetleri al
-            var newComplaints = await _context.Complaints
-                                              .Where(c => c.AssignedDepartmentId == user.DepartmentId && c.Status == ComplaintStatus.pending)
-                                              .ToListAsync();
+            // Kullanıcının departman ID'sine göre ilgili kategorileri veritabanından çekiyoruz
+            var relevantCategories = await _context.CategoryDepartmentMappings
+                                                   .Where(m => m.DepartmentId == user.DepartmentId)
+                                                   .Select(m => m.CategoryName)
+                                                   .ToListAsync();
 
-            // Dashboard için bir ViewModel oluştur
+            // Eğer ilgili kategori yoksa, boş bir liste döndür
+            if (!relevantCategories.Any())
+            {
+                // Boş bir ViewModel ile geri dön
+                return View(new MunicipalityDashboardViewModel());
+            }
+
+            // Şikayetleri, Category VEYA Category2 sütunlarından biri ilgili kategoriler listesinde varsa filtrele
+            var complaints = await _context.Complaints
+                                           .Where(c => relevantCategories.Contains(c.Category) ||
+                                                       (c.Category2 != null && relevantCategories.Contains(c.Category2)))
+                                           .ToListAsync();
+
+            var newComplaints = complaints.Where(c => c.Status == ComplaintStatus.pending).ToList();
+            var inProgressComplaints = complaints.Where(c => c.Status == ComplaintStatus.in_progress).ToList();
+            var completedComplaints = complaints.Where(c => c.Status == ComplaintStatus.resolved).ToList();
+
             var viewModel = new MunicipalityDashboardViewModel
             {
-                TotalComplaintsCount = newComplaints.Count,
-                RecentComplaints = newComplaints
+                TotalComplaintsCount = complaints.Count,
+                WaitingComplaintsCount = newComplaints.Count,
+                InProgressComplaintsCount = inProgressComplaints.Count,
+                CompletedComplaintsCount = completedComplaints.Count,
+                RecentComplaints = newComplaints.OrderByDescending(c => c.CreatedAt).Take(5).ToList()
             };
 
             return View(viewModel);

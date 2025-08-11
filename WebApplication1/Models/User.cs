@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SikayetAIWeb.Models
 {
@@ -36,6 +37,10 @@ namespace SikayetAIWeb.Models
 
         [Column("department_id")]
         public int? DepartmentId { get; set; }
+
+        [ForeignKey("DepartmentId")]
+        public Department? Department { get; set; }
+
         // Navigation properties
         public List<Complaint> Complaints { get; set; } = new List<Complaint>();
 

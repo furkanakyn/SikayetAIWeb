@@ -58,10 +58,13 @@ namespace SikayetAIWeb.Services
             if (user == null || !VerifyPasswordHash(password, user.PasswordHash))
                 throw new Exception("Kullanıcı adı veya şifre hatalı");
 
-            // Admin kullanıcıları normal giriş yapamaz
             if (user.UserType == UserType.admin)
             {
                 throw new Exception("Admin kullanıcılar buradan giriş yapamaz");
+            }
+            if (user.UserType == UserType.municipality)
+            {
+                throw new Exception("Belediye çalışanları buradan giriş yapamaz");
             }
 
             return user;

@@ -11,7 +11,12 @@ namespace SikayetAIWeb.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Complaint> Complaints { get; set; }
         public DbSet<Response> Responses { get; set; }
-        public DbSet<DepartmentCategory> DepartmentCategories { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Conversation> Conversations { get; set; }
+        public DbSet<Message> Messages { get; set; }
+
+        // Yeni eklediğiniz category_departments tablosu için DbSet
+        public DbSet<CategoryDepartmentMapping> CategoryDepartmentMappings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,37 +29,34 @@ namespace SikayetAIWeb.Models
                 .Property(c => c.Status)
                 .HasConversion<string>();
 
-            // --- İLİŞKİ DÜZENLEMELERİ ---
-
             // Complaint - User ilişkisi: Bir şikayetin bir kullanıcısı vardır.
             modelBuilder.Entity<Complaint>()
                 .HasOne(c => c.User)
                 .WithMany(u => u.Complaints)
                 .HasForeignKey(c => c.UserId);
 
-            // Response - Complaint ilişkisi: Bir yanıtın bir şikayete ait olduğu.
+            // Response - Complaint ilişkisi
             modelBuilder.Entity<Response>()
                 .HasOne(r => r.Complaint)
                 .WithMany(c => c.Responses)
                 .HasForeignKey(r => r.ComplaintId);
 
-            // Response - User ilişkisi: Bir yanıtın hangi belediye veya admin kullanıcısından geldiği.
+            // Response - User ilişkisi
             modelBuilder.Entity<Response>()
                 .HasOne(r => r.User)
                 .WithMany(u => u.Responses)
                 .HasForeignKey(r => r.UserId);
 
-            // DepartmentCategory - User ilişkisi: Bir kullanıcının (Belediye) bir departmanı olduğu.
-            // Bu, 'User' modelindeki 'DepartmentId' foreign key'ini kullanarak ilişkiyi kurar.
+            // User - Department ilişkisi
             modelBuilder.Entity<User>()
-                .HasOne<DepartmentCategory>()
-                .WithMany()
-                .HasForeignKey(u => u.DepartmentId);
+                .HasOne(u => u.Department)
+                .WithMany(d => d.Users)
+                .HasForeignKey(u => u.DepartmentId)
+                .OnDelete(DeleteBehavior.SetNull); // isteğe bağlı, silinince null olsun
 
-            // DepartmentCategory için birincil anahtar (Primary Key) tanımlaması.
-            // Modelde DepartmentId'yi birincil anahtar olarak kullanıyor.
-            modelBuilder.Entity<DepartmentCategory>()
-                .HasKey(dc => dc.DepartmentId);
+            // Department için primary key tanımı
+            modelBuilder.Entity<Department>()
+                .HasKey(d => d.DepartmentId);
 
             base.OnModelCreating(modelBuilder);
         }

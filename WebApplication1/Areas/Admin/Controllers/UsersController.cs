@@ -53,7 +53,7 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
         // GET: Admin/Users/Create
         public async Task<IActionResult> Create()
         {
-            ViewBag.Departments = new SelectList(await _context.DepartmentCategories.ToListAsync(), "DepartmentId", "DepartmentName");
+            ViewBag.Departments = new SelectList(await _context.Departments.ToListAsync(), "DepartmentId", "DepartmentName");
             return View();
         }
 
@@ -75,7 +75,7 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    ViewBag.Departments = new SelectList(await _context.DepartmentCategories.ToListAsync(), "DepartmentId", "DepartmentName");
+                    ViewBag.Departments = new SelectList(await _context.Departments.ToListAsync(), "DepartmentId", "DepartmentName");
                     return View(model);
                 }
 
@@ -99,7 +99,7 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Departments = new SelectList(await _context.DepartmentCategories.ToListAsync(), "DepartmentId", "DepartmentName");
+            ViewBag.Departments = new SelectList(await _context.Departments.ToListAsync(), "DepartmentId", "DepartmentName");
             return View(model);
         }
 
@@ -127,7 +127,7 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
                 DepartmentId = user.DepartmentId
             };
 
-            ViewBag.Departments = new SelectList(await _context.DepartmentCategories.ToListAsync(), "DepartmentId", "DepartmentName", user.DepartmentId);
+            ViewBag.Departments = new SelectList(await _context.Departments.ToListAsync(), "DepartmentId", "DepartmentName", user.DepartmentId);
 
             return View(viewModel);
         }
@@ -162,7 +162,7 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    ViewBag.Departments = new SelectList(await _context.DepartmentCategories.ToListAsync(), "DepartmentId", "DepartmentName", viewModel.DepartmentId);
+                    ViewBag.Departments = new SelectList(await _context.Departments.ToListAsync(), "DepartmentId", "DepartmentName", viewModel.DepartmentId);
                     return View(viewModel);
                 }
 
@@ -186,7 +186,7 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Departments = new SelectList(await _context.DepartmentCategories.ToListAsync(), "DepartmentId", "DepartmentName", viewModel.DepartmentId);
+            ViewBag.Departments = new SelectList(await _context.Departments.ToListAsync(), "DepartmentId", "DepartmentName", viewModel.DepartmentId);
             return View(viewModel);
         }
 

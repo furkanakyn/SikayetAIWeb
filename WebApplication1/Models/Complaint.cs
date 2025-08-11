@@ -49,7 +49,9 @@ namespace SikayetAIWeb.Models
 
         [Column("solution_note")]
         public string? SolutionNote { get; set; }
-
+        
+        [Column("reply")]
+        public string? Reply { get; set; }
         // Navigation properties
         public User? User { get; set; }
         public List<Response> Responses { get; set; } = new List<Response>();

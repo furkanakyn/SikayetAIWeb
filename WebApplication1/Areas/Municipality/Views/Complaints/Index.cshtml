@@ -1,0 +1,96 @@
+﻿@model List<SikayetAIWeb.Models.Complaint>
+
+@{
+    // Sayfanın başlığını belirleme
+    ViewData["Title"] = "Şikayetler";
+    Layout = "~/Areas/Municipality/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Sayfa başlığı ve rapor al butonu -->
+<div class="d-sm-flex align-items-center justify-content-between mb-5">
+    <h1 class="h3 mb-0 text-gray-800">Şikayetler</h1>
+    <a href="#" class="btn btn-primary-filled shadow-sm d-sm-inline-block">
+        <i class="fas fa-download me-2"></i> Rapor Al
+    </a>
+</div>
+
+<div class="row">
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var complaint in Model)
+        {
+            // Şikayet durumuna göre dinamik olarak CSS sınıfları atama
+            var statusClass = complaint.Status switch
+            {
+                ComplaintStatus.pending => "border-danger",
+                ComplaintStatus.in_progress => "border-warning",
+                ComplaintStatus.resolved => "border-success",
+                _ => ""
+            };
+
+            // Durum kartının başlığı için renk belirleme
+            var statusColor = complaint.Status switch
+            {
+                ComplaintStatus.pending => "#e74c3c", // Tehlike kırmızısı
+                ComplaintStatus.in_progress => "#f39c12", // Uyarı turuncusu
+                ComplaintStatus.resolved => "#2ecc71", // Başarı yeşili
+                _ => "#bdc3c7" // Varsayılan gri
+            };
+
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm h-100 @statusClass">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between" style="border-left: 5px solid @statusColor;">
+                        <h6 class="m-0 font-weight-bold text-dark">Şikayet #@complaint.ComplaintId</h6>
+                        <span class="badge text-uppercase text-light px-3 py-2" style="background-color: @statusColor;">
+                            @complaint.Status.ToString().Replace("_", " ")
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">@complaint.Title</h5>
+                        <hr class="my-3">
+                        <p class="card-text text-muted mb-1">
+                            <i class="fas fa-map-marker-alt me-2 text-dark"></i> Konum: @complaint.Location
+                        </p>
+                        <p class="card-text text-muted mb-3">
+                            <i class="fas fa-user me-2 text-dark"></i> Şikayet Eden: @(complaint.User?.FullName ?? "Bilinmiyor")
+                        </p>
+                        <a asp-area="Municipality" asp-controller="Complaints" asp-action="Details" asp-route-id="@complaint.ComplaintId" class="btn btn-secondary-outline mt-2">Detayları Görüntüle</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="alert alert-info shadow-sm" role="alert">
+                <i class="fas fa-info-circle me-2"></i> Atanmış şikayet bulunmamaktadır.
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    /* Kartların yüksekliklerini eşitlemek için */
+    .h-100 {
+        height: 100%;
+    }
+    /* Çizgi yerine sağlanan layout stilini kullanmak için
+           sadece durum rengini belirledik. */
+    .card.border-danger {
+        border: 1px solid var(--border-color); /* Varsayılan border */
+    }
+
+    .card.border-warning {
+        border: 1px solid var(--border-color);
+    }
+
+    .card.border-success {
+        border: 1px solid var(--border-color);
+    }
+
+    /* Bootstrap'in font-weight-bold sınıfının varsayılan değerini ezme */
+    .font-weight-bold {
+        font-weight: 600 !important;
+    }
+</style>
