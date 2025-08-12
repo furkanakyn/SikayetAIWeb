@@ -21,6 +21,22 @@
 
     <!-- Custom Site CSS - Bootstrap'i geçersiz kılmak ve özel stiller eklemek için en sonda olmalı -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <!-- SORUN GİDERME: Navbar'ın içeriğin üzerine gelmesini engellemek için -->
+    <style>
+        .main-header {
+            position: fixed; /* Navbar'ın daima üstte kalmasını sağlar */
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1030; /* Diğer içeriklerin üstünde kalması için */
+        }
+
+        main.flex-grow-1 {
+            /* Navbar'ın yüksekliği kadar boşluk bırakır. Değer navbar yüksekliğinize göre ayarlanabilir. */
+            padding-top: 75px;
+        }
+    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
     <header class="main-header">

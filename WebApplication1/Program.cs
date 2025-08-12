@@ -18,14 +18,12 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
-    options.Cookie.Name = "UserSession"; // Normal kullanýcýlar için Session adý
+    options.Cookie.Name = "UserSession"; 
 });
 
 // Admin için SADECE Cookie Authentication
 builder.Services.AddAuthentication(options =>
 {
-    // Varsayýlan þemayý net bir þekilde belirtiyoruz.
-    // Bu, Admin panelinin login/logout iþlemlerinde kullanýlacak.
     options.DefaultScheme = "AdminAuthCookie";
 })
 .AddCookie("AdminAuthCookie", options =>
@@ -53,7 +51,7 @@ builder.Services.AddScoped<CategoryPredictionService>();
 
 var app = builder.Build();
 
-// ... (Migration ve Admin kullanýcý oluþturma kýsmý ayný kalýr) ...
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -77,7 +75,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Middleware pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -89,13 +86,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Önce Authentication ve Authorization, sonra Session
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
 
-// Rotalar
-// ÖNEMLÝ: Area rotasý, varsayýlan rotadan ÖNCE gelmelidir!
 app.MapAreaControllerRoute(
     name: "MunicipalityArea",
     areaName: "Municipality",

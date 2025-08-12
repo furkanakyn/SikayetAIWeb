@@ -15,16 +15,16 @@ namespace SikayetAIWeb.Controllers
     {
         private readonly ComplaintService _complaintService;
         private readonly ILogger<ComplaintController> _logger;
-        private readonly ApplicationDbContext _context; // Hata 2'yi çözmek için eklendi
+        private readonly ApplicationDbContext _context; 
 
         public ComplaintController(
             ComplaintService complaintService,
             ILogger<ComplaintController> logger,
-            ApplicationDbContext context) // ApplicationDbContext bağımlılığı eklendi
+            ApplicationDbContext context) 
         {
             _complaintService = complaintService;
             _logger = logger;
-            _context = context; // Enjekte edilen nesne atandı
+            _context = context; 
         }
 
         [HttpGet]
@@ -116,10 +116,10 @@ namespace SikayetAIWeb.Controllers
                 return RedirectToAction("Login", "Auth");
             }
 
-            // `GetDepartmentComplaints` metodunun beklediği parametrelere göre çağrıyı düzenliyoruz
+            
             var complaints = _complaintService.GetDepartmentComplaints(
                 Enum.Parse<UserType>(userType, true),
-                null); // Burada category parametresi boş bırakıldı, eğer filtreleme yapılacaksa buradan gönderilebilir.
+                null); 
 
             return View(complaints);
         }

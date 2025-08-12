@@ -1,7 +1,9 @@
 ﻿// Models/RegisterViewModel.cs
+
+// Models/RegisterViewModel.cs
 using System.ComponentModel.DataAnnotations;
 
-namespace SikayetAIWeb.Models
+namespace WebApplication1.ViewModels
 {
     public class RegisterViewModel
     {

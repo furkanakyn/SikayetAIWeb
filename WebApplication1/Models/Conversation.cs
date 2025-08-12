@@ -17,7 +17,6 @@ namespace SikayetAIWeb.Models
         [Column("participant2_id")]
         public int Participant2Id { get; set; }
 
-        // Navigation properties
         [ForeignKey("Participant1Id")]
         public User Participant1 { get; set; }
 

@@ -21,7 +21,7 @@ namespace SikayetAIWeb.ViewModels
         public string Username { get; set; } = null!;
 
         [Display(Name = "Yeni Şifre")]
-        public string? Password { get; set; } // Şifre zorunlu değil
+        public string? Password { get; set; } 
 
         [Display(Name = "Yeni Şifre Tekrar")]
         [Compare("Password", ErrorMessage = "Şifreler eşleşmiyor.")]

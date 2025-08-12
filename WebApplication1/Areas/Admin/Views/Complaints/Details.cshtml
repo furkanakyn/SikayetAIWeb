@@ -10,7 +10,7 @@
                 <h4 class="mb-0">Şikayet Detayları - ID: @Model.ComplaintId</h4>
             </div>
             <div class="card-body">
-                @* Modelinizdeki User navigation property'si null olabileceği için kontrol ekliyoruz *@
+                
                 @if (Model.User != null)
                 {
                     <p><strong>Gönderen:</strong> @Model.User.FullName (@Model.User.Email)</p>
@@ -20,7 +20,7 @@
                     <p><strong>Gönderen:</strong> Bilinmiyor</p>
                 }
 
-                @* Yeni hali: Subject yerine Title, Content yerine Description kullanıyoruz. *@
+                
                 <p><strong>Konu:</strong> @Model.Title</p>
                 <p><strong>Tarih:</strong> @Model.CreatedAt.ToString("dd MMMM yyyy HH:mm")</p>
                 <p><strong>Kategori:</strong> <span class="badge bg-secondary">@Model.Category</span></p>

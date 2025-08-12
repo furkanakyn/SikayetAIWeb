@@ -24,14 +24,12 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
             _authService = authService;
         }
 
-        // GET: Admin/Users
         public async Task<IActionResult> Index()
         {
             var users = await _context.Users.ToListAsync();
             return View(users);
         }
 
-        // GET: Admin/Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -50,14 +48,14 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
             return View(user);
         }
 
-        // GET: Admin/Users/Create
+     
         public async Task<IActionResult> Create()
         {
             ViewBag.Departments = new SelectList(await _context.Departments.ToListAsync(), "DepartmentId", "DepartmentName");
             return View();
         }
 
-        // POST: Admin/Users/Create
+  
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateUserViewModel model)
@@ -103,7 +101,7 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
             return View(model);
         }
 
-        // GET: Admin/Users/Edit/5
+      
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -132,7 +130,6 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        // POST: Admin/Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, UserEditViewModel viewModel)
@@ -150,7 +147,7 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
                     return NotFound();
                 }
 
-                // Kullanıcı adı veya e-posta değiştiyse, başka bir kullanıcı tarafından kullanılıp kullanılmadığını kontrol et
+               
                 if (userToUpdate.Username != viewModel.Username && _context.Users.Any(u => u.Username == viewModel.Username))
                 {
                     ModelState.AddModelError("Username", "Bu kullanıcı adı zaten alınmış.");
@@ -166,7 +163,6 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
                     return View(viewModel);
                 }
 
-                // Şifre boş değilse hash'leyip güncelle
                 if (!string.IsNullOrEmpty(viewModel.Password))
                 {
                     _authService.CreatePasswordHash(viewModel.Password, out string passwordHash);
@@ -190,7 +186,7 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
             return View(viewModel);
         }
 
-        // POST: Admin/Users/Delete/5
+    
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

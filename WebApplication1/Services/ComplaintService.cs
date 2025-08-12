@@ -27,17 +27,16 @@ namespace SikayetAIWeb.Services
         {
             try
             {
-                // Navigation property'leri null yap
+               
                 complaint.User = null;
                 complaint.Responses = null;
 
-                // Kategori2 boşsa null olarak ayarla
                 if (string.IsNullOrWhiteSpace(complaint.Category2))
                 {
                     complaint.Category2 = null;
                 }
 
-                // Zaman damgalarını kontrol et
+                
                 if (complaint.CreatedAt == default)
                 {
                     complaint.CreatedAt = DateTime.UtcNow;
@@ -48,7 +47,7 @@ namespace SikayetAIWeb.Services
                     complaint.UpdatedAt = DateTime.UtcNow;
                 }
 
-                // Entity Framework'e ekle
+               
                 _context.Complaints.Add(complaint);
                 _context.SaveChanges();
                 return complaint;
@@ -85,7 +84,7 @@ namespace SikayetAIWeb.Services
             {
                 _context.Responses.Add(response);
 
-                // Şikayet durumunu güncelle
+             
                 var complaint = _context.Complaints.Find(response.ComplaintId);
                 if (complaint != null && complaint.Status == ComplaintStatus.pending)
                 {
@@ -102,7 +101,6 @@ namespace SikayetAIWeb.Services
             }
         }
 
-        // Bu metot, Response modelinin UserId ve IsRead alanlarına göre güncellendi
         public IEnumerable<Response> GetComplaintResponses(int complaintId, int userId)
         {
             var responses = _context.Responses
@@ -110,11 +108,9 @@ namespace SikayetAIWeb.Services
                 .OrderBy(r => r.CreatedAt)
                 .ToList();
 
-            // Okunmamış yanıtları işaretle (sadece şikayet sahibi için)
             var complaint = _context.Complaints.Find(complaintId);
             if (complaint != null && complaint.UserId == userId)
             {
-                // Yanıtı, o anki kullanıcının kendisi yazmadıysa ve okunmamışsa işaretle
                 var unreadResponses = responses.Where(r => r.UserId != userId ).ToList();
                
                 if (unreadResponses.Any())

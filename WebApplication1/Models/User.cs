@@ -41,7 +41,7 @@ namespace SikayetAIWeb.Models
         [ForeignKey("DepartmentId")]
         public Department? Department { get; set; }
 
-        // Navigation properties
+    
         public List<Complaint> Complaints { get; set; } = new List<Complaint>();
 
         public List<Response> Responses { get; set; } = new List<Response>();

@@ -25,7 +25,6 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
 
             viewModel.TotalComplaints = await _context.Complaints.CountAsync();
 
-            // Enum değerlerini string'e dönüştürürken küçük harfe çeviriyoruz
             viewModel.PendingComplaints = await _context.Complaints.CountAsync(c => c.Status == ComplaintStatus.pending);
             viewModel.InProgressComplaints = await _context.Complaints.CountAsync(c => c.Status == ComplaintStatus.in_progress);
             viewModel.ResolvedComplaints = await _context.Complaints.CountAsync(c => c.Status == ComplaintStatus.resolved);

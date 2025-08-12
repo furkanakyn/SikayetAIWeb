@@ -21,7 +21,6 @@ namespace SikayetAIWeb.Services
 
         public User Register(User user, string password)
         {
-            // Validasyon
             if (string.IsNullOrWhiteSpace(password))
                 throw new Exception("Şifre gereklidir");
 
@@ -31,7 +30,6 @@ namespace SikayetAIWeb.Services
             if (_context.Users.Any(u => u.Email == user.Email))
                 throw new Exception("Bu email adresi zaten kayıtlı");
 
-            // Şifre hashleme
             CreatePasswordHash(password, out string passwordHash);
 
             var newUser = new User

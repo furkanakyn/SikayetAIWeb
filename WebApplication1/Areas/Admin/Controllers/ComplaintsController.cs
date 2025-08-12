@@ -100,7 +100,6 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
                         return NotFound();
                     }
 
-                    // ✅ KRİTİK DÜZELTME: Enum değerini string'e çevirip küçük harfe dönüştürüyoruz
                     complaintToUpdate.Status = complaintViewModel.Status;
                     complaintToUpdate.SolutionNote = complaintViewModel.SolutionNote;
                     complaintToUpdate.AssignedDepartmentId = complaintViewModel.AssignedDepartmentId;

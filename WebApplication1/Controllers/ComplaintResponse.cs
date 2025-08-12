@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SikayetAIWeb.Models
 {
-    // Bu modelin veritabanındaki "responses" tablosuna karşılık geldiğini belirtiyoruz.
     [Table("responses")]
     public class Response
     {
@@ -25,8 +24,7 @@ namespace SikayetAIWeb.Models
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // Navigation properties
         public Complaint? Complaint { get; set; }
-        public User? User { get; set; } // Yanıtı yazan kullanıcıya ait navigasyon property'si
+        public User? User { get; set; }
     }
 }

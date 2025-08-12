@@ -1,0 +1,39 @@
+Yapay Zeka Modeli Kısmı:
+
+PyTorch, yapay zeka ve makine öğrenmesi modellerini geliştirmek ve eğitmek için kullanılan güçlü, esnek ve kullanımı kolay bir yazılım kütüphanesidir.
+
+Pandas, Python programlama dilinde veri analizi ve işleme için kullanılan çok güçlü bir kütüphanedir.
+	Veri tablolarını (spreadsheet, Excel gibi) kolayca okuma, yazma, düzenleme ve analiz etme işlemlerini yapar.
+	pd kısaltması, kodda Pandas fonksiyonlarını daha kısa ve hızlı yazmak için kullanılır.
+	
+NumPy (Numerical Python), Python’da matematiksel ve sayısal işlemleri yapmaya yarayan temel bir kütüphanedir.
+	Büyük sayısal diziler (array) ve matrislerle hızlı işlemler yapar.
+	Bilimsel hesaplamaların temelini oluşturur.
+
+accuracy_score: Doğru tahminlerin toplam içindeki oranı.
+f1_score: Hem doğru pozitifleri hem yanlış negatifleri dengeli ölçer (özellikle dengesiz veride önemli).
+classification_report: Tüm sınıflar için detaylı başarı raporu.
+
+MultiLabelBinarizer: Çoklu etiketleri (birden fazla kategoriye ait olabilen veriler) bilgisayarın anlayacağı “0” ve “1”lerden oluşan sayısal forma çevirir.
+
+1. Dataset Yeri
+Bu kısımda, elimizdeki şikayet metinleri ve bunlara ait kategoriler, modelin anlayacağı sayılara dönüştürülüyor. Her eğitim adımında model, bu verileri tek tek bu sınıf üzerinden alıyor ve öğreniyor.
+Örneğin, ‘Sular kesik’ metni önce bilgisayarın anlayacağı sayılara dönüştürülüyor.
+Aynı zamanda bu şikayete ait kategoriler (su kesintisi, su sorunu gibi) 0 ve 1’lerden oluşan bir listeye çevriliyor.
+Böylece model, metni ve ona ait kategorileri birlikte öğrenebiliyor
+
+Adım		İşlem							Sonuç
+Metin		“Sular kesik” → Tokenizer → Sayısal dizi		[101, 2509, 7321, 102] (örnek kod)
+Kategoriler	["su kesintisi", "su sorunu"] → Binary vektör		[0,1,1,0,0]
+Dataset		Bu veriler tensöre çevrilip modele gönderilir		Model hem metni hem kategoriyi görür
+
+2. Metrik Hesaplama 
+Modelin tahminlerini olasılık olarak alıyoruz, sonra bunları 0 veya 1 olarak yorumluyoruz.
+Böylece modelin tahminleri ile gerçek cevapları karşılaştırıp, başarısını doğruluk ve F1 skorlarıyla ölçüyoruz.
+Bu metrikler, modelin hem genel başarısını hem de farklı kategorilerde ne kadar iyi olduğunu gösteriyor.
+
+Tokenizer Nedir?
+Tokenizer (Kelime Parçalayıcı), metni modelin anlayabileceği sayısal formata (token'lara) dönüştüren bir araçtır. NLP modelleri (BERT gibi) ham metni işleyemez; metni token adı verilen küçük birimlere böler ve her tokenı bir sayıyla (ID) eşler.
+Metin: "Yollar çok kötü"
+Tokenlar: ["Y", "##ol", "##lar", "çok", "kötü"]
+ID'ler: [124, 589, 231, 89, 1020]

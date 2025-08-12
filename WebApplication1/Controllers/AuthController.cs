@@ -2,6 +2,7 @@
 using SikayetAIWeb.Models;
 using SikayetAIWeb.Services;
 using System.Diagnostics;
+using WebApplication1.ViewModels;
 
 namespace SikayetAIWeb.Controllers
 {
@@ -43,7 +44,6 @@ namespace SikayetAIWeb.Controllers
                 HttpContext.Session.SetString("FullName", user.FullName);
                 HttpContext.Session.SetString("Email", user.Email);
                 _logger.LogInformation($"User {model.Username} logged in successfully");
-                // Eğer kullanıcı belediye ise departman kontrolü yap
                 if (user.UserType == UserType.municipality)
                 {
                     var hasDepartment = _db.Departments
@@ -96,7 +96,6 @@ namespace SikayetAIWeb.Controllers
                 HttpContext.Session.SetString("UserEmail", registeredUser.Email);
 
                 TempData["SuccessMessage"] = "Kayıt işleminiz başarıyla tamamlandı! Lütfen giriş yapın.";
-                // Kayıt başarılı sonrası doğrudan Login sayfasına yönlendir
                 return RedirectToAction("Login", "Auth");
             }
             catch (Exception ex)

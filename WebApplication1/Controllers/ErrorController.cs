@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SikayetAIWeb.Models;
+using WebApplication1.ViewModels;
 using System.Diagnostics;
 
 namespace SikayetAIWeb.Controllers

@@ -10,6 +10,6 @@ namespace SikayetAIWeb.ViewModels
 
         [Required(ErrorMessage = "Yanıt içeriği boş bırakılamaz.")]
         [Display(Name = "Yanıt")]
-        public string Content { get; set; } = null!; // Response modelindeki isimle eşleşmesi için 'Content' olarak güncellendi
+        public string Content { get; set; } = null!; 
     }
 }

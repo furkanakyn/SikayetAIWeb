@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace SikayetAIWeb.Models
+namespace WebApplication1.ViewModels
 {
     public class ErrorViewModel : Controller
     {

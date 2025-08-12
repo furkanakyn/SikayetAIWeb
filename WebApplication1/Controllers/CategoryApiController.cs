@@ -15,17 +15,15 @@ namespace SikayetAIWeb.Controllers
             _categoryService = categoryService;
         }
 
-        // POST: /api/category/predict
         [HttpPost("predict")]
         public async Task<IActionResult> Predict([FromBody] PredictionRequest req)
         {
             if (req == null || string.IsNullOrWhiteSpace(req.Text))
                 return BadRequest(new { error = "Metin boş olamaz." });
 
-            // Flask servisine istek at
             var labels = await _categoryService.PredictCategoriesAsync(req.Text);
 
-            // İki kategoriyi döndür
+           
             return Ok(new { labels });
         }
 

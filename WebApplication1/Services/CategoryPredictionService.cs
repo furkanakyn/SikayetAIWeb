@@ -62,7 +62,6 @@ namespace SikayetAIWeb.Services
             return new List<string> { FallbackCategory };
         }
 
-        // ✅ Eski Controller ile uyumlu: Tek kategori döner
         public async Task<string> PredictCategoryAsync(string complaintText)
         {
             var categories = await PredictCategoriesAsync(complaintText);

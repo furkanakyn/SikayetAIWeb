@@ -5,6 +5,7 @@ using SikayetAIWeb.Models;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
+using WebApplication1.ViewModels;
 
 namespace SikayetAIWeb.Controllers
 {
@@ -109,7 +110,6 @@ namespace SikayetAIWeb.Controllers
                                        .Where(c => c.UserId == userId.Value)
                                        .OrderByDescending(c => c.CreatedAt)
                                        .ToList();
-
             
             return View(complaints);
         }
@@ -126,17 +126,6 @@ namespace SikayetAIWeb.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        // 🔹 SHA256 Hash Metodu
-        private string ComputeSha256Hash(string rawData)
-        {
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
-                StringBuilder builder = new StringBuilder();
-                foreach (var b in bytes)
-                    builder.Append(b.ToString("x2"));
-                return builder.ToString();
-            }
-        }
+ 
     }
 }

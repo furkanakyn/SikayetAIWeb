@@ -39,10 +39,10 @@ namespace SikayetAIWeb.Models
         public ComplaintStatus Status { get; set; } = ComplaintStatus.pending;
 
         [Column("created_at")]
-        public DateTime CreatedAt { get; set; } // Nullable değil
+        public DateTime CreatedAt { get; set; }
 
         [Column("updated_at")]
-        public DateTime UpdatedAt { get; set; } // Nullable değil
+        public DateTime UpdatedAt { get; set; } 
        
         [Column("assigned_department_id")]
         public int? AssignedDepartmentId { get; set; }
@@ -52,7 +52,6 @@ namespace SikayetAIWeb.Models
         
         [Column("reply")]
         public string? Reply { get; set; }
-        // Navigation properties
         public User? User { get; set; }
         public List<Response> Responses { get; set; } = new List<Response>();
 

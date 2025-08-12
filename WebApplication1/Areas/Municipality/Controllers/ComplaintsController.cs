@@ -21,7 +21,6 @@ namespace SikayetAIWeb.Areas.Municipality.Controllers
             _context = context;
         }
 
-        // Şikayet listesini çeken metot
         public async Task<IActionResult> Index()
         {
             var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -48,9 +47,9 @@ namespace SikayetAIWeb.Areas.Municipality.Controllers
                 return View(new List<Complaint>());
             }
 
-            // Complaints tablosundan şikayetleri çekerken ilgili kullanıcı verilerini de yüklüyoruz
+           
             var complaints = await _context.Complaints
-                                            .Include(c => c.User) // Şikayet edenin bilgilerini dahil et
+                                            .Include(c => c.User) 
                                             .Where(c => relevantCategories.Contains(c.Category) ||
                                                         (c.Category2 != null && relevantCategories.Contains(c.Category2)))
                                             .ToListAsync();
@@ -58,7 +57,6 @@ namespace SikayetAIWeb.Areas.Municipality.Controllers
             return View(complaints);
         }
 
-        // Şikayet detaylarını görüntüleyen metot
         public async Task<IActionResult> Details(int id)
         {
             var complaint = await _context.Complaints
@@ -73,7 +71,6 @@ namespace SikayetAIWeb.Areas.Municipality.Controllers
             return View(complaint);
         }
 
-        // Şikayet durumu ve yanıtını aynı anda güncelleyen metot
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateAndReply(int id, ComplaintStatus status, string? reply, string? solutionNote)
@@ -83,8 +80,6 @@ namespace SikayetAIWeb.Areas.Municipality.Controllers
             {
                 return NotFound();
             }
-
-            // Şikayetin durumunu, yanıtını ve çözüm notunu güncelliyoruz
             complaint.Status = status;
             complaint.Reply = reply;
             complaint.SolutionNote = solutionNote;

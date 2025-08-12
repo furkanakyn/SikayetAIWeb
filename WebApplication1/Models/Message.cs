@@ -24,7 +24,7 @@ namespace SikayetAIWeb.Models
         [Column("sent_at")]
         public DateTime SentAt { get; set; } = DateTime.UtcNow;
 
-        // Navigation properties
+        
         [ForeignKey("ConversationId")]
         public Conversation Conversation { get; set; }
 

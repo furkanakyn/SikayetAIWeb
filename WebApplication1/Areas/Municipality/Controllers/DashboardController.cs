@@ -43,14 +43,11 @@ namespace SikayetAIWeb.Areas.Municipality.Controllers
                                                    .Select(m => m.CategoryName)
                                                    .ToListAsync();
 
-            // Eğer ilgili kategori yoksa, boş bir liste döndür
             if (!relevantCategories.Any())
             {
-                // Boş bir ViewModel ile geri dön
                 return View(new MunicipalityDashboardViewModel());
             }
 
-            // Şikayetleri, Category VEYA Category2 sütunlarından biri ilgili kategoriler listesinde varsa filtrele
             var complaints = await _context.Complaints
                                            .Where(c => relevantCategories.Contains(c.Category) ||
                                                        (c.Category2 != null && relevantCategories.Contains(c.Category2)))

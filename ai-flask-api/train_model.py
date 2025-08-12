@@ -1,36 +1,36 @@
 import os
 import torch
-import warnings
+import warnings # Gereksiz uyarıları gizler.
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, accuracy_score, classification_report
 from sklearn.preprocessing import MultiLabelBinarizer
-from torch.utils.data import Dataset
-from transformers import (
-    AutoTokenizer,
-    AutoModelForSequenceClassification,
+from torch.utils.data import Dataset #PyTorch kütüphanesinde veri setlerini kolay yönetmek için kullanılan bir sınıf.
+from transformers import ( #Hugging Face Transformers kütüphanesinden, BERT için eğitim araçlarını içe aktarır.
+    AutoTokenizer,#Metinleri modelin anlayacağı şekilde parçalara böler.
+    AutoModelForSequenceClassification, #Metin sınıflandırma için hazır model yapısı
     Trainer,
-    TrainingArguments,
-    AutoConfig,
-    EarlyStoppingCallback
+    TrainingArguments, #Modeli eğitmek ve ayarlarını yapmak için araçlar. (Trainer da)
+    AutoConfig, #Modelin yapısını ve ayarlarını tanımlar.
+    EarlyStoppingCallback #Model iyileşmeyi durdurduğunda eğitimden erken çıkmayı sağlar (gereksiz eğitimi engeller).
 )
-from torch.nn import BCEWithLogitsLoss
+from torch.nn import BCEWithLogitsLoss #Modelin çoklu etiketli sınıflandırmada kullanacağı hata fonksiyonudur.
 
 # Uyarıları filtrele
 warnings.filterwarnings("ignore")
 
 # Sabitler
-MAX_LENGTH = 256
-BATCH_SIZE = 16 if torch.cuda.is_available() else 8
-LEARNING_RATE = 3e-5
-NUM_EPOCHS = 10
+MAX_LENGTH = 256  # Metinlerin maksimum token uzunluğu
+BATCH_SIZE = 16 if torch.cuda.is_available() else 8  # GPU varsa 16, yoksa 8
+LEARNING_RATE = 3e-5  # Optimizasyon öğrenme oranı
+NUM_EPOCHS = 10  # Eğitim turu sayısı
 
-# 1. Özelleştirilmiş Dataset Sınıfı
+# 1. Özelleştirilmiş Dataset Sınıfı, Transformer modeli için veri yapısı oluşturmak.
 class MultiLabelComplaintDataset(Dataset):
     def __init__(self, encodings, labels):
-        self.encodings = encodings
-        self.labels = labels
+        self.encodings = encodings #Tokenizer çıktıları
+        self.labels = labels # Çoklu etiketler
 
     def __getitem__(self, idx):
         item = {key: torch.tensor(val[idx]) for key, val in self.encodings.items()}
@@ -40,7 +40,7 @@ class MultiLabelComplaintDataset(Dataset):
     def __len__(self):
         return len(self.labels)
 
-# 2. Metrik Hesaplama Fonksiyonu
+# 2. Metrik Hesaplama Fonksiyonu, model eğitilirken veya test edilirken tahmin sonuçlarını değerlendirmek için kullanılır.
 def compute_metrics(pred):
     sigmoid = torch.nn.Sigmoid()
     probs = sigmoid(torch.tensor(pred.predictions))
@@ -68,7 +68,7 @@ def train_multi_label_model():
     # 2. Çoklu etiketleri ayır
     df["etiketler"] = df["kategori"].apply(lambda x: [label.strip() for label in x.split(",") if label.strip()])
     
-    # 3. Etiketleri binary formata çevir
+    # 3. Etiketleri binary formata çevir, [“su”, “yol”] → [1,0,1,0,0]
     mlb = MultiLabelBinarizer()
     binary_labels = mlb.fit_transform(df["etiketler"])
     label_list = mlb.classes_
@@ -76,7 +76,7 @@ def train_multi_label_model():
     print(f"\n{'='*50}\nEtiket Dağılımı:\n{pd.Series(df['etiketler'].explode()).value_counts()}\n{'='*50}")
     print(f"Toplam {len(label_list)} etiket: {label_list}")
 
-    # 4. Veriyi böl (stratify çoklu etiketlerde zor olduğu için basit bölme)
+    # 4. Veriyi böl (stratify çoklu etiketlerde zor olduğu için basit bölme) Verinin %85’i eğitim, %15’i doğrulama için ayrılıyor.
     train_texts, val_texts, train_labels, val_labels = train_test_split(
         df["şikayet_metni"].tolist(), 
         binary_labels,
@@ -95,7 +95,7 @@ def train_multi_label_model():
             padding=True,
             max_length=max_length,
             return_tensors="pt"
-        )
+        ) #Türkçe BERT modelinin kelime dönüştürücüsü (tokenizer) kullanılıyor. Metinler kelime kelime değil, parçalara (token) ayrılıyor ve sayıya çevriliyor.
 
     train_encodings = batch_encode(train_texts, tokenizer)
     val_encodings = batch_encode(val_texts, tokenizer)
@@ -118,32 +118,33 @@ def train_multi_label_model():
         config=config
     ).to(device)
 
-    # 10. Sınıf ağırlıklarını otomatik hesapla
-    label_counts = binary_labels.sum(axis=0)
+    # 10. Sınıf ağırlıklarını otomatik hesapla 
+    label_counts = binary_labels.sum(axis=0) # Her bir etiketin (kategori) kaç kez geçtiğini sayar
     pos_weights = (len(binary_labels) - label_counts) / (label_counts + 1e-5)  # Sıfır bölme hatası önleme
-    pos_weights = torch.tensor(pos_weights, dtype=torch.float32).to(device)
+    pos_weights = torch.tensor(pos_weights, dtype=torch.float32).to(device) #Nadir etiketlere daha fazla ağırlık verir
     model.loss_fct = BCEWithLogitsLoss(pos_weight=pos_weights)
+    #Ağırlık hesaplaması, nadir etiketlerin kayıp fonksiyonunda daha fazla dikkate alınmasını sağlar.
 
     # 11. Eğitim parametreleri
     training_args = TrainingArguments(
-        output_dir="./model_output",
-        num_train_epochs=NUM_EPOCHS,
-        per_device_train_batch_size=BATCH_SIZE,
-        per_device_eval_batch_size=BATCH_SIZE*2,
-        learning_rate=LEARNING_RATE,
-        weight_decay=0.01,
-        warmup_ratio=0.1,
-        eval_strategy="epoch",
-        save_strategy="epoch",
-        load_best_model_at_end=True,
-        metric_for_best_model="f1_macro",
-        greater_is_better=True,
-        fp16=torch.cuda.is_available(),
-        logging_dir="./logs",
-        logging_steps=50,
-        report_to="tensorboard",
-        save_total_limit=2,
-        seed=42
+        output_dir="./model_output",       # Çıktıların kaydedileceği dizin
+        num_train_epochs=NUM_EPOCHS,       # Eğitim epoch sayısı (10)
+        per_device_train_batch_size=BATCH_SIZE,  # Eğitim batch boyutu (16/8)
+        per_device_eval_batch_size=BATCH_SIZE*2, # Değerlendirme batch boyutu (daha büyük)
+        learning_rate=LEARNING_RATE,       # Öğrenme oranı (3e-5)
+        weight_decay=0.01,                 # Ağırlık sönümü (overfitting önleme)
+        warmup_ratio=0.1,                  # Isınma adımlarının oranı (lr yavaşça artar)
+        eval_strategy="epoch",             # Her epoch sonunda değerlendirme epoch: Epoch, modelin tüm eğitim verisi    üzerinde bir tam tur eğitim yapmasıdır.
+        save_strategy="epoch",             # Her epoch sonunda modeli kaydet
+        load_best_model_at_end=True,       # En iyi modeli eğitim sonunda yükle
+        metric_for_best_model="f1_macro",  # En iyi modeli seçerken kullanılacak metrik
+        greater_is_better=True,            # f1_macro ne kadar yüksekse o kadar iyi
+        fp16=torch.cuda.is_available(),    # GPU varsa 16-bit kayan nokta kullan
+        logging_dir="./logs",              # Log kayıtları dizini
+        logging_steps=50,                  # Her 50 adımda log kaydet
+        report_to="tensorboard",           # Logları TensorBoard'a gönder
+        save_total_limit=2,                # En fazla 2 model checkpoint sakla
+        seed=42                            # Rastgelelik için seed
     )
 
     # 12. Trainer
@@ -154,7 +155,7 @@ def train_multi_label_model():
         eval_dataset=val_dataset,
         tokenizer=tokenizer,
         compute_metrics=compute_metrics,
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
+        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]  # 3 epoch boyunca iyileşme olmazsa durdur
     )
 
     # 13. Eğitimi başlat
