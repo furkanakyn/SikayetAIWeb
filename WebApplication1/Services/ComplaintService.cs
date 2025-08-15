@@ -20,14 +20,16 @@ namespace SikayetAIWeb.Services
             return _context.Complaints
                 .Include(c => c.Responses)
                 .Include(c => c.User)
+                .Include(c => c.AssignedDepartment)
                 .FirstOrDefault(c => c.ComplaintId == complaintId);
         }
+
 
         public Complaint CreateComplaint(Complaint complaint)
         {
             try
             {
-               
+
                 complaint.User = null;
                 complaint.Responses = null;
 
@@ -36,7 +38,7 @@ namespace SikayetAIWeb.Services
                     complaint.Category2 = null;
                 }
 
-                
+
                 if (complaint.CreatedAt == default)
                 {
                     complaint.CreatedAt = DateTime.UtcNow;
@@ -47,7 +49,14 @@ namespace SikayetAIWeb.Services
                     complaint.UpdatedAt = DateTime.UtcNow;
                 }
 
-               
+                var mapping = _context.CategoryDepartmentMappings
+                .FirstOrDefault(cd => cd.CategoryName.ToLower() == complaint.Category.ToLower());
+
+                if (mapping != null)
+                {
+                    complaint.AssignedDepartmentId = mapping.DepartmentId;
+                }
+
                 _context.Complaints.Add(complaint);
                 _context.SaveChanges();
                 return complaint;

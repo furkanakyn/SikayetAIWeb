@@ -37,3 +37,4 @@ Tokenizer (Kelime Parçalayıcı), metni modelin anlayabileceği sayısal format
 Metin: "Yollar çok kötü"
 Tokenlar: ["Y", "##ol", "##lar", "çok", "kötü"]
 ID'ler: [124, 589, 231, 89, 1020]
+[0.6,0.1,]

@@ -47,11 +47,11 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label asp-for="AssignedDepartmentId" class="form-label">Atanan Departman</label>
-                            <select asp-for="AssignedDepartmentId" class="form-control" asp-items="@ViewBag.Departments">
-                                <option value="">-- Departman Seçiniz --</option>
-                            </select>
-                            <span asp-validation-for="AssignedDepartmentId" class="text-danger"></span>
+                            <label class="form-label">Atanan Departman</label>
+                            <input type="text"
+                                   class="form-control"
+                                   value="@Model?.AssignedDepartmentName"
+                                   readonly />
                         </div>
                     </div>
                     <div class="col-md-6">

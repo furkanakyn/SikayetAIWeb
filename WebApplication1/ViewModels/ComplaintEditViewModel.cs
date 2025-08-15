@@ -11,5 +11,7 @@ namespace SikayetAIWeb.ViewModels
         public string? Content { get; set; }
         public DateTime ComplaintDate { get; set; }
         public int? AssignedDepartmentId { get; set; }
+        public string? AssignedDepartmentName { get; set; }
+
     }
 }

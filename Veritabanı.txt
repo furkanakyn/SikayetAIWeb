@@ -1,0 +1,128 @@
+-- USERS TABLOSU
+CREATE TABLE users (
+    user_id       integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    username      character varying(50) NOT NULL UNIQUE,
+    password_hash text NOT NULL,
+    email         character varying(100) NOT NULL UNIQUE,
+    full_name     character varying(100) NOT NULL,
+    user_type     character varying(20) NOT NULL,
+    created_at    timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    last_login    timestamp with time zone,
+    department_id integer,
+    updated_at    timestamp without time zone,
+    CONSTRAINT users_user_type_check CHECK (
+        user_type::text = ANY (
+            ARRAY['admin'::character varying, 'municipality'::character varying, 'citizen'::character varying]
+        )
+    )
+);
+--Admin girişi ( şifre:12456 )
+INSERT INTO users 
+(username, password_hash, email, full_name, user_type, department_id, created_at, updated_at)
+VALUES 
+('admin', 'bsu1ypz+5K3PwlrXCkXJdJr1PYlwwb+JKlyE/4HOI6lmU/X0KKpE9qU1kziYT5BFTDCKYMqY/HiWnSz8YfY45kswwVnFKPmhKZjo/dd+rA9XzJUbKY+ci0N41zqzqxsp0/AZ35YBDlrj6FJQtp3FsiAUuVZa6GvoWcnVdn+ZjCcmil4EMRPoUrVbngsKhzfNoMlY1JGSirSozrQLrXnZkp1NpsAQJ8Vse5O6m1BBj2BZXTR/O1j+B5Rqxjwu/8ss', 
+'admin@example.com', 'First Admin', 'admin', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- DEPARTMENTS TABLOSU
+CREATE TABLE departments (
+    department_id   integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    department_name character varying(255) NOT NULL UNIQUE
+);
+
+-- CATEGORY_DEPARTMENTS TABLOSU
+CREATE TABLE category_departments (
+    id              integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    category_name   character varying(100) NOT NULL,
+    department_id   integer NOT NULL,
+    department_name character varying(255) NOT NULL
+);
+
+INSERT INTO departments (department_id, department_name) VALUES
+(1, 'Su ve Kanalizasyon Müdürlüğü'),
+(2, 'Fen İşleri Müdürlüğü'),
+(3, 'Temizlik İşleri Müdürlüğü'),
+(4, 'Zabıta Müdürlüğü'),
+(5, 'Ulaşım Dairesi Başkanlığı'),
+(6, 'Park ve Bahçeler Müdürlüğü'),
+(7, 'Veteriner İşleri Müdürlüğü'),
+(8, 'Zabıta Müdürlüğü / Güvenlik Birimi'),
+(9, 'Halkla İlişkiler Müdürlüğü');
+
+
+
+-- COMPLAINTS TABLOSU
+CREATE TABLE complaints (
+    complaint_id           integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id                integer NOT NULL,
+    title                  character varying(100) NOT NULL,
+    description            text NOT NULL,
+    category               character varying(50) NOT NULL,
+    location               character varying(100),
+    status                 character varying(20) DEFAULT 'pending',
+    created_at             timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at             timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    category2              character varying(50),
+    assigned_department_id integer,
+    solution_note          text,
+    reply                  text,
+    CONSTRAINT complaints_status_check CHECK (
+        status::text = ANY (
+            ARRAY[
+                'pending'::character varying,
+                'in_progress'::character varying,
+                'resolved'::character varying,
+                'rejected'::character varying
+            ]::text[]
+        )
+    ),
+    CONSTRAINT complaints_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES users (user_id),
+    CONSTRAINT fk_complaints_departments FOREIGN KEY (assigned_department_id)
+        REFERENCES departments (department_id)
+        ON DELETE SET NULL
+);
+
+INSERT INTO category_departments (category_name, department_id, department_name) VALUES
+('Su Kesintisi', 1, 'Su ve Kanalizasyon Müdürlüğü'),
+('Yol Sorunu', 2, 'Fen İşleri Müdürlüğü'),
+('Çevre Temizliği', 3, 'Temizlik İşleri Müdürlüğü'),
+('Gürültü', 4, 'Zabıta Müdürlüğü'),
+('Altyapı', 2, 'Fen İşleri Müdürlüğü'),
+('Ulaşım', 5, 'Ulaşım Dairesi Başkanlığı'),
+('Park Bahçe', 6, 'Park ve Bahçeler Müdürlüğü'),
+('Hayvan', 7, 'Veteriner İşleri Müdürlüğü'),
+('Güvenlik', 8, 'Zabıta Müdürlüğü / Güvenlik Birimi'),
+('Diğer', 9, 'Halkla İlişkiler Müdürlüğü');
+
+
+-- CONVERSATIONS TABLOSU
+CREATE TABLE conversations (
+    conversation_id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    participant1_id integer NOT NULL,
+    participant2_id integer NOT NULL,
+    CONSTRAINT conversations_participant1_id_fkey FOREIGN KEY (participant1_id) REFERENCES users(user_id),
+    CONSTRAINT conversations_participant2_id_fkey FOREIGN KEY (participant2_id) REFERENCES users(user_id)
+);
+
+-- MESSAGES TABLOSU
+CREATE TABLE messages (
+    message_id      integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    conversation_id integer NOT NULL,
+    sender_id       integer NOT NULL,
+    content         text NOT NULL,
+    sent_at         timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    is_read         boolean NOT NULL DEFAULT false,
+    CONSTRAINT messages_conversation_id_fkey FOREIGN KEY (conversation_id) REFERENCES conversations(conversation_id),
+    CONSTRAINT messages_sender_id_fkey FOREIGN KEY (sender_id) REFERENCES users(user_id)
+);
+
+-- RESPONSES TABLOSU
+CREATE TABLE responses (
+    response_id  integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    complaint_id integer NOT NULL,
+    user_id      integer NOT NULL,
+    content      text NOT NULL,
+    created_at   timestamp without time zone NOT NULL,
+    CONSTRAINT fk_responses_complaints FOREIGN KEY (complaint_id) REFERENCES complaints(complaint_id) ON DELETE CASCADE,
+    CONSTRAINT fk_responses_users FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);

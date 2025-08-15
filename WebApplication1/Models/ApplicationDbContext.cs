@@ -33,6 +33,9 @@ namespace SikayetAIWeb.Models
                 .WithMany(u => u.Complaints) //Her User’ın birden fazla Complaint'ı olabilir
                 .HasForeignKey(c => c.UserId);
 
+
+            
+
             // Response - Complaint ilişkisi
             modelBuilder.Entity<Response>()
                 .HasOne(r => r.Complaint)

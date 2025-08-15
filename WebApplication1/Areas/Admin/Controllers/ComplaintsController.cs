@@ -34,18 +34,15 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var complaint = await _context.Complaints
-              .Include(c => c.User)
-              .FirstOrDefaultAsync(c => c.ComplaintId == id);
+               .Include(c => c.AssignedDepartment)
+               .Include(c => c.User)
+               .FirstOrDefaultAsync(c => c.ComplaintId == id);
 
             if (complaint == null)
-            {
                 return NotFound();
-            }
 
             return View(complaint);
         }
@@ -54,17 +51,15 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var complaint = await _context.Complaints.FindAsync(id);
+            // 🔹 Burayı FindAsync yerine Include ile değiştiriyoruz
+            var complaint = await _context.Complaints
+                .Include(c => c.AssignedDepartment)
+                .FirstOrDefaultAsync(c => c.ComplaintId == id);
+
             if (complaint == null)
-            {
                 return NotFound();
-            }
-
-            var viewModelStatus = ComplaintStatus.pending;                                     
 
             var model = new ComplaintEditViewModel
             {
@@ -74,21 +69,19 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
                 ComplaintDate = complaint.CreatedAt,
                 SolutionNote = complaint.SolutionNote,
                 AssignedDepartmentId = complaint.AssignedDepartmentId,
-                Status = viewModelStatus
+                Status = complaint.Status,
+                AssignedDepartmentName = complaint.AssignedDepartment?.DepartmentName
             };
 
             return View(model);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Status,SolutionNote,AssignedDepartmentId")] ComplaintEditViewModel complaintViewModel)
         {
             if (id != complaintViewModel.Id)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -96,11 +89,9 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
                 {
                     var complaintToUpdate = await _context.Complaints.FindAsync(id);
                     if (complaintToUpdate == null)
-                    {
                         return NotFound();
-                    }
 
-                    complaintToUpdate.Status = complaintViewModel.Status;
+                    complaintToUpdate.Status = complaintViewModel.Status;
                     complaintToUpdate.SolutionNote = complaintViewModel.SolutionNote;
                     complaintToUpdate.AssignedDepartmentId = complaintViewModel.AssignedDepartmentId;
                     complaintToUpdate.UpdatedAt = DateTime.UtcNow;
@@ -111,13 +102,9 @@ namespace SikayetAIWeb.Areas.Admin.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!ComplaintExists(complaintViewModel.Id))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }

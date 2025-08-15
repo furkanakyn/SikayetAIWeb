@@ -54,7 +54,7 @@ namespace SikayetAIWeb.Models
         public string? Reply { get; set; }
         public User? User { get; set; }
         public List<Response> Responses { get; set; } = new List<Response>();
+        public Department? AssignedDepartment { get; set; }
 
-     
     }
 }
