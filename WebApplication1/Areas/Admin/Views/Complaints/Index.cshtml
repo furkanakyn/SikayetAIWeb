@@ -1,4 +1,4 @@
-﻿@model List<SikayetAIWeb.Models.Complaint>
+﻿@model List<SikayetAIWeb.Areas.Admin.Controllers.ComplaintWithExportStatusViewModel>
 @{
     ViewData["Title"] = "Şikayetler";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
@@ -12,6 +12,9 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary">Tüm Şikayetler</h6>
+            <a asp-area="Admin" asp-controller="Complaints" asp-action="ExportTrainingDataToCsv" class="btn btn-primary btn-sm">
+                <i class="fas fa-download fa-sm text-white-50"></i> Eğitim Verilerini İndir
+            </a>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -23,14 +26,16 @@
                             <th>Kategori</th>
                             <th>Durum</th>
                             <th>Tarih</th>
+                            <th>İndirildi</th>
                             <th>İşlem</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (Model != null && Model.Any())
                         {
-                            @foreach (var complaint in Model)
+                            @foreach (var complaintWithStatus in Model)
                             {
+                                var complaint = complaintWithStatus.Complaint;
                                 <tr>
                                     <td>@complaint.Title</td>
                                     <td>@(complaint.User?.FullName ?? "Bilinmiyor")</td>
@@ -50,6 +55,16 @@
                                     </td>
                                     <td>@complaint.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
                                     <td>
+                                        @if (complaintWithStatus.IsExported)
+                                        {
+                                            <i class="fas fa-check-circle text-success" title="Dışa Aktarıldı"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-times-circle text-danger" title="Dışa Aktarılmadı"></i>
+                                        }
+                                    </td>
+                                    <td>
                                         <a asp-area="Admin" asp-controller="Complaints" asp-action="Details" asp-route-id="@complaint.ComplaintId" class="btn btn-sm btn-info me-2"><i class="fas fa-eye"></i></a>
                                         <a asp-area="Admin" asp-controller="Complaints" asp-action="Edit" asp-route-id="@complaint.ComplaintId" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
                                     </td>
@@ -59,7 +74,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="6" class="text-center">Henüz şikayet bulunmuyor.</td>
+                                <td colspan="7" class="text-center">Henüz şikayet bulunmuyor.</td>
                             </tr>
                         }
                     </tbody>

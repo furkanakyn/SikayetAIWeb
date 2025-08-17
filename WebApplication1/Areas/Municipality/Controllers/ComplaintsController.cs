@@ -38,21 +38,21 @@ namespace SikayetAIWeb.Areas.Municipality.Controllers
             }
 
             var relevantCategories = await _context.CategoryDepartmentMappings
-                                                     .Where(m => m.DepartmentId == user.DepartmentId)
-                                                     .Select(m => m.CategoryName)
-                                                     .ToListAsync();
+                                                   .Where(m => m.DepartmentId == user.DepartmentId)
+                                                   .Select(m => m.CategoryName)
+                                                   .ToListAsync();
 
             if (!relevantCategories.Any())
             {
                 return View(new List<Complaint>());
             }
 
-           
+
             var complaints = await _context.Complaints
-                                            .Include(c => c.User) 
-                                            .Where(c => relevantCategories.Contains(c.Category) ||
-                                                        (c.Category2 != null && relevantCategories.Contains(c.Category2)))
-                                            .ToListAsync();
+                                           .Include(c => c.User)
+                                           .Where(c => relevantCategories.Contains(c.Category) ||
+                                                       (c.Category2 != null && relevantCategories.Contains(c.Category2)))
+                                           .ToListAsync();
 
             return View(complaints);
         }
@@ -60,8 +60,8 @@ namespace SikayetAIWeb.Areas.Municipality.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var complaint = await _context.Complaints
-                                             .Include(c => c.User)
-                                             .FirstOrDefaultAsync(c => c.ComplaintId == id);
+                                          .Include(c => c.User)
+                                          .FirstOrDefaultAsync(c => c.ComplaintId == id);
 
             if (complaint == null)
             {
@@ -80,6 +80,24 @@ namespace SikayetAIWeb.Areas.Municipality.Controllers
             {
                 return NotFound();
             }
+
+            // Eğer şikayet 'resolved' olarak değiştiriliyorsa ve daha önce resolved değilse ve daha önce training data olarak eklenmemişse
+            bool isAlreadyInTrainingData = await _context.TrainingDataComplaints.AnyAsync(tdc => tdc.ComplaintText == complaint.Description);
+
+            if (status == ComplaintStatus.resolved && complaint.Status != ComplaintStatus.resolved && !isAlreadyInTrainingData)
+            {
+                var trainingData = new TrainingDataComplaint
+                {
+                    ComplaintText = complaint.Description,
+                    Category1 = complaint.Category,
+                    Category2 = complaint.Category2,
+                    CreatedAt = DateTime.UtcNow,
+                    IsExported = false
+                };
+                _context.TrainingDataComplaints.Add(trainingData);
+            }
+
+            // Şikayet durumunu ve diğer bilgileri güncelle
             complaint.Status = status;
             complaint.Reply = reply;
             complaint.SolutionNote = solutionNote;

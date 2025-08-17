@@ -126,3 +126,13 @@ CREATE TABLE responses (
     CONSTRAINT fk_responses_complaints FOREIGN KEY (complaint_id) REFERENCES complaints(complaint_id) ON DELETE CASCADE,
     CONSTRAINT fk_responses_users FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+CREATE TABLE TrainingDataComplaint (
+    Id SERIAL PRIMARY KEY,                   
+    ComplaintText TEXT NOT NULL,             
+    Category1 VARCHAR(100) NOT NULL,        
+    Category2 VARCHAR(100),                 
+    CreatedAt TIMESTAMP DEFAULT NOW(),       
+    IsExported BOOLEAN DEFAULT FALSE         
+);
+
+

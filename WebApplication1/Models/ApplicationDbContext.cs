@@ -15,6 +15,7 @@ namespace SikayetAIWeb.Models
         public DbSet<Conversation> Conversations { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<CategoryDepartmentMapping> CategoryDepartmentMappings { get; set; }
+        public DbSet<TrainingDataComplaint> TrainingDataComplaints { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,9 +34,6 @@ namespace SikayetAIWeb.Models
                 .WithMany(u => u.Complaints) //Her User’ın birden fazla Complaint'ı olabilir
                 .HasForeignKey(c => c.UserId);
 
-
-            
-
             // Response - Complaint ilişkisi
             modelBuilder.Entity<Response>()
                 .HasOne(r => r.Complaint)
@@ -53,7 +51,7 @@ namespace SikayetAIWeb.Models
                 .HasOne(u => u.Department)
                 .WithMany(d => d.Users)
                 .HasForeignKey(u => u.DepartmentId)
-                .OnDelete(DeleteBehavior.SetNull); 
+                .OnDelete(DeleteBehavior.SetNull);
 
             // Department için primary key tanımı
             modelBuilder.Entity<Department>()

@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     tester = ONNXModelTester(model_path, tokenizer_path, config_path)
 
-    test_texts = [
+    test_texts = [ # Örnek test edilecek metinler
         "3 gündür su yok",
         "Yolda büyük bir çukur var",
         "Çöp konteyneri taşmış",
